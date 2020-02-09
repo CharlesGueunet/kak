@@ -1,9 +1,15 @@
 # User preference
 # ───────────────
 
+set-option global ui_options ncurses_status_on_top=true
+# set-option -add global ui_options ncurses_assistant=cat
+ 
+set-option global autoreload yes
+set-option global scrolloff 3,5
+set-option global tabstop 2
+set-option global indentwidth 2
 set-option global makecmd 'make -j8'
 set-option global grepcmd 'ag --column'
-set-option global ui_options ncurses_status_on_top=true
 
 # Colors
 # ──────
@@ -12,6 +18,7 @@ set-face global Default default,black
 set-face global LineNumbers default,black
 set-face global StatusLine default,black
 
+add-highlighter global/number-lines number-lines
 add-highlighter global/ show-matching
 # add-highlighter global/ show-whitespaces
 add-highlighter global/ dynregex '%reg{/}' 0:+u
@@ -28,16 +35,16 @@ hook global BufNewFile .* %{ editorconfig-load }
 # ───────────────────────
 
 hook global WinSetOption filetype=(c|cpp) %{
-    clang-enable-autocomplete 
-    clang-enable-diagnostics
-    alias window lint clang-parse
-    alias window lint-next-error clang-diagnostics-next
+  clang-enable-autocomplete 
+  clang-enable-diagnostics
+  alias window lint clang-parse
+  alias window lint-next-error clang-diagnostics-next
 }
 
 hook global WinSetOption filetype=python %{
-    jedi-enable-autocomplete
-    lint-enable
-    set-option global lintcmd 'flake8'
+  jedi-enable-autocomplete
+  lint-enable
+  set-option global lintcmd 'flake8'
 }
 
 map -docstring "xml tag objet" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
@@ -49,12 +56,14 @@ declare-option -hidden regex curword
 set-face global CurWord default,rgb:4a4a4a
 
 hook global NormalIdle .* %{
-    eval -draft %{ try %{
-        exec <space><a-i>w <a-k>\A\w+\z<ret>
-        set-option buffer curword "\b\Q%val{selection}\E\b"
+  eval -draft %{
+    try %{
+      exec <space><a-i>w <a-k>\A\w+\z<ret>
+      set-option buffer curword "\b\Q%val{selection}\E\b"
     } catch %{
-        set-option buffer curword ''
-    } }
+      set-option buffer curword ''
+    }
+  }
 }
 add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 
@@ -62,6 +71,17 @@ add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 # ───────────────
 
 map global normal = ':prompt math: %{exec "a%val{text}<lt>esc>|bc<lt>ret>"}<ret>'
+map global normal <ret> :
+map global normal <backspace> ';'
+map global normal <tab> '<a-;>'
+map global normal <a-tab> '<a-:>'
+# leave insert using jj
+hook global InsertChar '[jj]' %{
+  try %{
+    execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
+    execute-keys <esc>
+  }
+}
 
 # System clipboard handling
 # ─────────────────────────
@@ -86,9 +106,6 @@ map global normal '#' :comment-line<ret>
 map global user -docstring 'next lint error' n ':lint-next-error<ret>'
 map global normal <c-p> :lint<ret>
 
-map global user -docstring 'gdb helper mode' g ':gdb-helper<ret>'
-map global user -docstring 'gdb helper mode (repeat)' G ':gdb-helper-repeat<ret>'
-
 hook global -always BufOpenFifo '\*grep\*' %{ map -- global normal - ':grep-next-match<ret>' }
 hook global -always BufOpenFifo '\*make\*' %{ map -- global normal - ':make-next-error<ret>' }
 
@@ -106,54 +123,66 @@ define-command find -params 1 -shell-script-candidates %{ ag -g '' --ignore "$ka
 define-command mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } }
 
 define-command ide %{
-    rename-client main
-    set-option global jumpclient main
+  rename-client main
+  set-option global jumpclient main
 
-    new rename-client tools
-    set-option global toolsclient tools
+  new rename-client tools
+  set-option global toolsclient tools
 
-    new rename-client docs
-    set-option global docsclient docs
+  new rename-client docs
+  set-option global docsclient docs
 }
 
 define-command delete-buffers-matching -params 1 %{
-    evaluate-commands -buffer * %{
-        evaluate-commands %sh{ case "$kak_buffile" in $1) echo "delete-buffer" ;; esac }
-    }
+  evaluate-commands -buffer * %{
+    evaluate-commands %sh{ case "$kak_buffile" in $1) echo "delete-buffer" ;; esac }
+  }
 }
 
 # Plugins
 # ───────
 
-# plugin
+# plugin manager
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
+
+# buffers
+plug "Delapouite/kakoune-buffers" %{
+  map global normal <c-b> ': enter-buffers-mode<ret>' -docstring 'buffers'
+}
+
+# text manipulation
+plug "alexherbo2/replace-mode.kak" %{
+  map global user r ': enter-replace-mode<ret>' -docstring 'Enter replace mode'
+}
+plug "alexherbo2/split-object.kak" %{
+  map global normal <a-I> ': enter-user-mode split-object<ret>'
+}
 
 # surround
 plug "alexherbo2/auto-pairs.kak"
 plug "h-youhei/kakoune-surround" %{
-    declare-user-mode surround
-    map global surround s ':surround<ret>' -docstring 'surround'
-    map global surround c ':change-surround<ret>' -docstring 'change'
-    map global surround d ':delete-surround<ret>' -docstring 'delete'
-    map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
-    map global normal '<c-s>' ':enter-user-mode surround<ret>'
+  declare-user-mode surround
+  map global surround s ':surround<ret>' -docstring 'surround'
+  map global surround c ':change-surround<ret>' -docstring 'change'
+  map global surround d ':delete-surround<ret>' -docstring 'delete'
+  map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+  map global normal '<c-s>' ':enter-user-mode surround<ret>'
+  set-option global surround_begin auto-pairs-disable
+  set-option global surround_end auto-pairs-enable
 }
 
 # move blocks
 plug "alexherbo2/move-line.kak" %{
-    map global normal "J" ': move-line-below<ret>'
-    map global normal "K" ': move-line-above<ret>'
-}
-# text manipulation
-plug "alexherbo2/replace-mode.kak" %{
-    map global user r ': enter-replace-mode<ret>' -docstring 'Enter replace mode'
-}
-plug "alexherbo2/split-object.kak" %{
-    map global normal <a-I> ': enter-user-mode split-object<ret>'
+  map global normal "J" ': move-line-below<ret>'
+  map global normal "K" ': move-line-above<ret>'
 }
 
-# buffers
-plug "Delapouite/kakoune-buffers" %{
-    map global normal <c-b> ': enter-buffers-mode<ret>' -docstring 'buffers'
-}
+# completion
+# plug "ul/kak-lsp" do %{
+#   cargo install --locked --force --path .
+# }
+# eval %sh{kak-lsp --kakoune -s $kak_session}
+# hook global WinSetOption filetype=(c|cpp) %{
+#       lsp-enable-window
+# }
