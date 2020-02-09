@@ -7,7 +7,7 @@ set-option global ui_options ncurses_status_on_top=true
 
 # Colors
 # ──────
-colorscheme dracula
+# colorscheme dracula
 set-face global Default default,black
 set-face global LineNumbers default,black
 set-face global StatusLine default,black
@@ -125,15 +125,35 @@ define-command delete-buffers-matching -params 1 %{
 # Plugins
 # ───────
 
+# plugin
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
 
+# surround
 plug "alexherbo2/auto-pairs.kak"
+plug "h-youhei/kakoune-surround" %{
+    declare-user-mode surround
+    map global surround s ':surround<ret>' -docstring 'surround'
+    map global surround c ':change-surround<ret>' -docstring 'change'
+    map global surround d ':delete-surround<ret>' -docstring 'delete'
+    map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+    map global normal '<c-s>' ':enter-user-mode surround<ret>'
+}
 
-plug "h-youhei/kakoune-surround"
-declare-user-mode surround
-map global surround s ':surround<ret>' -docstring 'surround'
-map global surround c ':change-surround<ret>' -docstring 'change'
-map global surround d ':delete-surround<ret>' -docstring 'delete'
-map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
-map global normal 'S' ':enter-user-mode surround<ret>'
+# move blocks
+plug "alexherbo2/move-line.kak" %{
+    map global normal "J" ': move-line-below<ret>'
+    map global normal "K" ': move-line-above<ret>'
+}
+# text manipulation
+plug "alexherbo2/replace-mode.kak" %{
+    map global user r ': enter-replace-mode<ret>' -docstring 'Enter replace mode'
+}
+plug "alexherbo2/split-object.kak" %{
+    map global normal <a-I> ': enter-user-mode split-object<ret>'
+}
+
+# buffers
+plug "Delapouite/kakoune-buffers" %{
+    map global normal <c-b> ': enter-buffers-mode<ret>' -docstring 'buffers'
+}
