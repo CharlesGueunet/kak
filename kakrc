@@ -25,12 +25,6 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 
 hook global WinCreate ^[^*]+$ %{ add-highlighter window/ number-lines -hlcursor }
 
-# Enable editor config
-# ────────────────────
-
-hook global BufOpenFile .* %{ editorconfig-load }
-hook global BufNewFile .* %{ editorconfig-load }
-
 # Filetype specific hooks
 # ───────────────────────
 
@@ -118,8 +112,6 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # Helper commands
 # ───────────────
 
-define-command find -params 1 -shell-script-candidates %{ ag -g '' --ignore "$kak_opt_ignored_files" } %{ edit %arg{1} }
-
 define-command mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } }
 
 define-command ide %{
@@ -151,6 +143,11 @@ plug "Delapouite/kakoune-buffers" %{
   map global normal <c-b> ': enter-buffers-mode<ret>' -docstring 'buffers'
 }
 
+# fzf
+plug "andreyorst/fzf.kak" %{
+  map global normal <c-p> ': fzf-mode<ret>'
+}
+
 # text manipulation
 plug "alexherbo2/replace-mode.kak" %{
   map global user r ': enter-replace-mode<ret>' -docstring 'Enter replace mode'
@@ -168,8 +165,6 @@ plug "h-youhei/kakoune-surround" %{
   map global surround d ':delete-surround<ret>' -docstring 'delete'
   map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
   map global normal '<c-s>' ':enter-user-mode surround<ret>'
-  set-option global surround_begin auto-pairs-disable
-  set-option global surround_end auto-pairs-enable
 }
 
 # move blocks
@@ -177,12 +172,3 @@ plug "alexherbo2/move-line.kak" %{
   map global normal "J" ': move-line-below<ret>'
   map global normal "K" ': move-line-above<ret>'
 }
-
-# completion
-# plug "ul/kak-lsp" do %{
-#   cargo install --locked --force --path .
-# }
-# eval %sh{kak-lsp --kakoune -s $kak_session}
-# hook global WinSetOption filetype=(c|cpp) %{
-#       lsp-enable-window
-# }
