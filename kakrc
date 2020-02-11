@@ -20,20 +20,12 @@ set-face global StatusLine default,black
 
 add-highlighter global/number-lines number-lines
 add-highlighter global/ show-matching
-# add-highlighter global/ show-whitespaces
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 
 hook global WinCreate ^[^*]+$ %{ add-highlighter window/ number-lines -hlcursor }
 
 # Filetype specific hooks
 # ───────────────────────
-
-# hook global WinSetOption filetype=(c|cpp) %{
-#   clang-enable-autocomplete 
-#   clang-enable-diagnostics
-#   alias window lint clang-parse
-#   alias window lint-next-error clang-diagnostics-next
-# }
 
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
@@ -64,7 +56,8 @@ add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 # Custom mappings
 # ───────────────
 
-map global normal = ':prompt math: %{exec "a%val{text}<lt>esc>|bc<lt>ret>"}<ret>'
+map global normal , <space>
+map global normal <space> ,
 map global normal <ret> :
 map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
@@ -80,7 +73,6 @@ hook global InsertChar '[jj]' %{
 hook global WinSetOption filetype=(c|cpp) %{
   map global user -docstring 'build with cmake' 'b' ':terminal cmake --build build --target install -- -j 8<ret>'
   map global user -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
-  map global user -docstring 'format clode with clang' 'f' '|clang-format'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
