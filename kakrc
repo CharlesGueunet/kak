@@ -28,12 +28,12 @@ hook global WinCreate ^[^*]+$ %{ add-highlighter window/ number-lines -hlcursor 
 # Filetype specific hooks
 # ───────────────────────
 
-hook global WinSetOption filetype=(c|cpp) %{
-  clang-enable-autocomplete 
-  clang-enable-diagnostics
-  alias window lint clang-parse
-  alias window lint-next-error clang-diagnostics-next
-}
+# hook global WinSetOption filetype=(c|cpp) %{
+#   clang-enable-autocomplete 
+#   clang-enable-diagnostics
+#   alias window lint clang-parse
+#   alias window lint-next-error clang-diagnostics-next
+# }
 
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
@@ -75,6 +75,18 @@ hook global InsertChar '[jj]' %{
     execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
     execute-keys <esc>
   }
+}
+
+hook global WinSetOption filetype=(c|cpp) %{
+  map global user -docstring 'build with cmake' 'b' ':terminal cmake --build build --target install -- -j 8<ret>'
+  map global user -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
+  map global user -docstring 'format clode with clang' 'f' '|clang-format'
+}
+hook global WinSetOption filetype=(cpp) %{
+  map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
+}
+hook global WinSetOption filetype=(c) %{
+  map global user -docstring 'alternate header/source' 'a' ':c-alternative-file<ret>'
 }
 
 # System clipboard handling
@@ -171,4 +183,28 @@ plug "h-youhei/kakoune-surround" %{
 plug "alexherbo2/move-line.kak" %{
   map global normal "J" ': move-line-below<ret>'
   map global normal "K" ': move-line-above<ret>'
+}
+
+# completion
+plug "ul/kak-lsp" do %{
+    cargo build --release --locked
+    cargo install --force --path .
+} config %{
+    define-command lsp-restart %{ lsp-stop; lsp-start }
+    set-option global lsp_completion_trigger "execute-keys 'h<a-h><a-k>\S[^\h\n,=;*(){}\[\]]\z<ret>'"
+    set-option global lsp_diagnostic_line_error_sign "!"
+    set-option global lsp_diagnostic_line_warning_sign "?"
+    hook global WinSetOption filetype=(c|cpp|rust) %{
+        map window user "l" ": enter-user-mode lsp<ret>" -docstring "LSP mode"
+        lsp-enable-window
+        lsp-auto-hover-enable
+        lsp-auto-hover-insert-mode-disable
+        set-option window lsp_hover_anchor true
+        set-face window DiagnosticError default+u
+        set-face window DiagnosticWarning default+u
+    }
+    hook global WinSetOption filetype=rust %{
+        set-option window lsp_server_configuration rust.clippy_preference="on"
+    }
+    hook global KakEnd .* lsp-exit
 }
