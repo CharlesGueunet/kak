@@ -35,6 +35,11 @@ hook global WinSetOption filetype=python %{
 
 map -docstring "xml tag objet" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
 
+# Status line
+# ───────────
+ 
+set-option global modelinefmt '{{mode_info}} {magenta}%val{client}{default} has {yellow}%sh{bs=${kak_buflist//[^:]};echo $((${#bs}+1))} buf{default} on {green}%val{bufname}{default} {{context_info}} {cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
+
 # Highlight the word under the cursor
 # ───────────────────────────────────
 
@@ -74,7 +79,7 @@ hook global WinSetOption filetype=(c|cpp) %{
   declare-user-mode cmake
   map global user -docstring 'enter make mode' 'c' ':enter-user-mode cmake<ret>'
   map global cmake -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
-  map global cmake -docstring 'install with cmake' 'b' ':terminal cmake --target install -- -j 8<ret>'
+  map global cmake -docstring 'install with cmake' 'b' ':terminal cmake --build build -- -j 8<ret>'
   map global cmake -docstring 'install with cmake' 'i' ':terminal cmake --build build --target install -- -j 8<ret>'
 }
 hook global WinSetOption filetype=(cpp) %{
@@ -96,16 +101,12 @@ evaluate-commands %sh{
     printf "map global user -docstring 'paste (after) from clipboard' p '!%s<ret>'\n" "$paste"
     printf "map global user -docstring 'paste (before) from clipboard' P '<a-!>%s<ret>'\n" "$paste"
     printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
-    printf "map global user -docstring 'replace from clipboard' R '|%s<ret>'\n" "$paste"
 }
 
 # Various mappings
 # ────────────────
 
 map global normal '#' :comment-line<ret>
-
-map global user -docstring 'next lint error' n ':lint-next-error<ret>'
-map global normal <c-p> :lint<ret>
 
 hook global -always BufOpenFifo '\*grep\*' %{ map -- global normal - ':grep-next-match<ret>' }
 hook global -always BufOpenFifo '\*make\*' %{ map -- global normal - ':make-next-error<ret>' }
@@ -147,12 +148,12 @@ plug "andreyorst/plug.kak" noload
 
 # buffers
 plug "Delapouite/kakoune-buffers" %{
-  map global normal <c-b> ': enter-buffers-mode<ret>' -docstring 'buffers'
+  map global user 'b' ': enter-buffers-mode<ret>' -docstring 'buffers manipulation'
 }
 
 # fzf
 plug "andreyorst/fzf.kak" %{
-  map global normal <c-p> ': fzf-mode<ret>'
+  map global user  'f' ': fzf-mode<ret>' -docstring 'fuzzy navigation'
 }
 
 # text manipulation
@@ -190,7 +191,7 @@ plug "ul/kak-lsp" do %{
         map window user "l" ": enter-user-mode lsp<ret>" -docstring "LSP mode"
         lsp-enable-window
         lsp-auto-hover-enable
-        lsp-auto-hover-insert-mode-disable
+        lsp-auto-hover-insert-mode-enable
         set-option window lsp_hover_anchor true
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
