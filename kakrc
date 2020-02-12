@@ -71,8 +71,11 @@ hook global InsertChar '[jj]' %{
 }
 
 hook global WinSetOption filetype=(c|cpp) %{
-  map global user -docstring 'build with cmake' 'b' ':terminal cmake --build build --target install -- -j 8<ret>'
-  map global user -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
+  declare-user-mode cmake
+  map global user -docstring 'enter make mode' 'c' ':enter-user-mode cmake<ret>'
+  map global cmake -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
+  map global cmake -docstring 'install with cmake' 'b' ':terminal cmake --target install -- -j 8<ret>'
+  map global cmake -docstring 'install with cmake' 'i' ':terminal cmake --build build --target install -- -j 8<ret>'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
@@ -153,9 +156,6 @@ plug "andreyorst/fzf.kak" %{
 }
 
 # text manipulation
-plug "alexherbo2/replace-mode.kak" %{
-  map global user r ': enter-replace-mode<ret>' -docstring 'Enter replace mode'
-}
 plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
