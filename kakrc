@@ -79,7 +79,7 @@ hook global WinSetOption filetype=(c|cpp) %{
   declare-user-mode cmake
   map global user -docstring 'enter make mode' 'c' ':enter-user-mode cmake<ret>'
   map global cmake -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
-  map global cmake -docstring 'install with cmake' 'b' ':terminal cmake --build build -- -j 8<ret>'
+  map global cmake -docstring 'build with cmake' 'b' ':terminal cmake --build build -- -j 8<ret>'
   map global cmake -docstring 'install with cmake' 'i' ':terminal cmake --build build --target install -- -j 8<ret>'
 }
 hook global WinSetOption filetype=(cpp) %{
