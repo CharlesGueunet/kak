@@ -18,8 +18,7 @@ set-face global Default default,black
 set-face global LineNumbers default,black
 set-face global StatusLine default,black
 
-add-highlighter global/ wrap
-add-highlighter global/ number-lines -relative -hlcursor
+add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf ' ' -spc ' ' -nbsp '⍽'
 add-highlighter global/ show-matching
 add-highlighter global/ dynregex '%reg{/}' 0:+u
