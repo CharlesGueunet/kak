@@ -89,6 +89,7 @@ hook global InsertChar '[jj]' %{
   }
 }
 
+# CMake
 hook global WinSetOption filetype=(c|cpp) %{
   declare-user-mode cmake
   map global user -docstring 'enter make mode' 'c' ':enter-user-mode cmake<ret>'
@@ -102,6 +103,39 @@ hook global WinSetOption filetype=(cpp) %{
 hook global WinSetOption filetype=(c) %{
   map global user -docstring 'alternate header/source' 'a' ':c-alternative-file<ret>'
 }
+
+# Git
+def git-show-blamed-commit %{
+  git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
+}
+def git-log-lines %{
+  git log -L %sh{
+    anchor="${kak_selection_desc%,*}"
+    anchor_line="${anchor%.*}"
+    echo "$anchor_line,$kak_cursor_line:$kak_buffile"
+  }
+}
+def git-toggle-blame %{
+  try %{
+    addhl window/git-blame group
+    rmhl window/git-blame
+    git blame
+  } catch %{
+    git hide-blame
+  }
+}
+def git-hide-diff %{ rmhl window/git-diff }
+declare-user-mode git
+map global user -docstring 'enter git mode' 'g' ':enter-user-mode git<ret>'
+map global git b ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
+map global git l ': git log<ret>'                -docstring 'log'
+map global git c ': git commit<ret>'             -docstring 'commit'
+map global git d ': git diff<ret>'               -docstring 'diff'
+map global git s ': git status<ret>'             -docstring 'status'
+map global git h ': git show-diff<ret>'          -docstring 'show diff'
+map global git H ': git-hide-diff<ret>'          -docstring 'hide diff'
+map global git w ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
+map global git L ': git-log-lines<ret>'          -docstring 'log blame'
 
 # System clipboard handling
 # ─────────────────────────
