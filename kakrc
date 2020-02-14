@@ -2,7 +2,7 @@
 # ───────────────
 
 set-option global ui_options ncurses_status_on_top=true
-# set-option -add global ui_options ncurses_assistant=cat
+# set-option -add global ui_options ncurses_assistant=dilbert
  
 set-option global autoreload yes
 set-option global scrolloff 3,5
@@ -37,8 +37,20 @@ map -docstring "xml tag objet" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>
 
 # Status line
 # ───────────
- 
-set-option global modelinefmt '{{mode_info}} {magenta}%val{client}{default} has {yellow}%sh{bs=${kak_buflist//[^:]};echo $((${#bs}+1))} buf{default} on {green}%val{bufname}{default} {{context_info}} {cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
+declare-option -docstring "name of the git branch holding the current buffer" \
+    str modeline_git_branch
+
+hook global WinCreate .* %{
+    hook window NormalIdle .* %{ evaluate-commands %sh{
+        branch=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --abbrev-ref HEAD 2>/dev/null)
+        if [ -n "${branch}" ]; then
+            printf 'set window modeline_git_branch %%{%s}' "${branch}"
+        else
+            printf 'set window modeline_git_branch %%{%s}' "none"
+        fi
+    } }
+}
+set-option global modelinefmt '{{mode_info}} {green}%val{bufname}{default} on {magenta}%val{client}{default} git:{yellow}%opt{modeline_git_branch}{default} {{context_info}} {cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
 
 # Highlight the word under the cursor
 # ───────────────────────────────────
