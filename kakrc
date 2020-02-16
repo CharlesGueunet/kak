@@ -30,15 +30,16 @@ add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
+  set-option global lintcmd kak_pylint
+  # set-option global lintcmd 'flake8'
   lint-enable
-  set-option global lintcmd 'flake8'
 }
 
-map -docstring "xml tag objet" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
+map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
 
 # Status line
 # ───────────
-declare-option -docstring "name of the git branch holding the current buffer" \
+declare-option -docstring 'name of the git branch holding the current buffer' \
     str modeline_git_branch
 
 hook global WinCreate .* %{
@@ -88,19 +89,28 @@ hook global InsertChar '[jj]' %{
   }
 }
 
-# CMake
+# C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp) %{
   declare-user-mode cmake
-  map global user -docstring 'enter make mode' 'c' ':enter-user-mode cmake<ret>'
-  map global cmake -docstring 'configure cmake' 'c' ':terminal ccmake -S . -B build<ret>'
-  map global cmake -docstring 'build with cmake' 'b' ':terminal cmake --build build -- -j 8<ret>'
-  map global cmake -docstring 'install with cmake' 'i' ':terminal cmake --build build --target install -- -j 8<ret>'
+  map global user   'c' ':enter-user-mode cmake<ret>'                                  -docstring 'enter make mode'
+  map global cmake  'c' ':terminal ccmake -S . -B build<ret>'                          -docstring 'configure cmake'
+  map global cmake  'b' ':terminal cmake --build build -- -j 8<ret>'                   -docstring 'build with cmake'
+  map global cmake  'i' ':terminal cmake --build build --target install -- -j 8<ret>'  -docstring 'install with cmake'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
 }
 hook global WinSetOption filetype=(c) %{
   map global user -docstring 'alternate header/source' 'a' ':c-alternative-file<ret>'
+}
+
+# Python: lint
+hook global WinSetOption filetype=python %{
+  declare-user-mode lint-python
+  map global user 'l' ':enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
+  map global lint-python 'l' ':lint<ret>'                 -docstring 'update lint'
+  map global lint-python 'n' ':lint-next-error<ret>'      -docstring 'next error'
+  map global lint-python 'p' ':lint-previous-error<ret>'  -docstring 'previous error'
 }
 
 # Git
@@ -125,7 +135,7 @@ def git-toggle-blame %{
 }
 def git-hide-diff %{ rmhl window/git-diff }
 declare-user-mode git
-map global user -docstring 'enter git mode' 'g' ':enter-user-mode git<ret>'
+map global user 'g' ':enter-user-mode git<ret>'  -docstring 'enter git mode' 
 map global git b ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
 map global git l ': git log<ret>'                -docstring 'log'
 map global git c ': git commit<ret>'             -docstring 'commit'
@@ -212,17 +222,17 @@ plug "alexherbo2/split-object.kak" %{
 plug "alexherbo2/auto-pairs.kak"
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
-  map global surround s ':surround<ret>' -docstring 'surround'
-  map global surround c ':change-surround<ret>' -docstring 'change'
-  map global surround d ':delete-surround<ret>' -docstring 'delete'
-  map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
   map global normal '<c-s>' ':enter-user-mode surround<ret>'
+  map global surround s ':surround<ret>'               -docstring 'surround'
+  map global surround c ':change-surround<ret>'        -docstring 'change'
+  map global surround d ':delete-surround<ret>'        -docstring 'delete'
+  map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
 }
 
 # move blocks
 plug "alexherbo2/move-line.kak" %{
-  map global normal "J" ': move-line-below<ret>'
-  map global normal "K" ': move-line-above<ret>'
+  map global normal 'J' ': move-line-below<ret>'
+  map global normal 'K' ': move-line-above<ret>'
 }
 
 # completion
@@ -235,7 +245,7 @@ plug "ul/kak-lsp" do %{
     set-option global lsp_diagnostic_line_error_sign "!"
     set-option global lsp_diagnostic_line_warning_sign "?"
     hook global WinSetOption filetype=(c|cpp|rust) %{
-        map window user "l" ": enter-user-mode lsp<ret>" -docstring "LSP mode"
+        map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
         lsp-enable-window
         lsp-auto-hover-enable
         lsp-auto-hover-insert-mode-enable
