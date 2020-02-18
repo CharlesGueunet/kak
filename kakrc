@@ -13,7 +13,6 @@ set-option global grepcmd 'ag --column'
 
 # Colors
 # ──────
-# colorscheme dracula
 set-face global Default default,black
 set-face global LineNumbers default,black
 set-face global StatusLine default,black
@@ -256,5 +255,8 @@ plug "ul/kak-lsp" do %{
     hook global WinSetOption filetype=rust %{
         set-option window lsp_server_configuration rust.clippy_preference="on"
     }
+    # hook global WinSetOption filetype=python %{
+    #   set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
+    # }
     hook global KakEnd .* lsp-exit
 }
