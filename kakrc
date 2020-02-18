@@ -208,8 +208,20 @@ plug "Delapouite/kakoune-buffers" %{
 }
 
 # fzf
-plug "andreyorst/fzf.kak" %{
+plug "andreyorst/fzf.kak" config %{
   map global user  'f' ': fzf-mode<ret>' -docstring 'fuzzy navigation'
+} defer "fzf" %{
+  set-option global fzf_preview_width '65%'
+  set-option global fzf_project_use_tilda true
+  evaluate-commands %sh{
+    if [ -n "$(command -v fd)" ]; then
+      echo "set-option global fzf_file_command %{fd . --no-ignore --type f --follow --hidden --exclude .git --exclude .svn}"
+    else
+      echo "set-option global fzf_file_command %{find . \( -path '*/.svn*' -o -path '*/.git*' \) -prune -o -type f -follow -print}"
+    fi
+    [ -n "$(command -v bat)" ] && echo "set-option global fzf_highlight_command bat"
+    [ -n "${kak_opt_grepcmd}" ] && echo "set-option global fzf_sk_grep_command %{${kak_opt_grepcmd}}"
+  }
 }
 
 # text manipulation
