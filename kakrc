@@ -87,14 +87,40 @@ hook global InsertChar '[jj]' %{
     execute-keys <esc>
   }
 }
+# clear search buffer
+map global user ' ' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
 # C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp) %{
+  define-command cmakeb %{ nop %sh{ {
+      cmake --build build -- -j6
+      res=$?
+      if [ $res -eq 0 ]; then
+        echo "eval -client '$kak_client' 'echo -debug compilation success'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo compilation success'" | kak -p ${kak_session}
+      else
+        echo "eval -client '$kak_client' 'echo -debug compilation failed'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -markup {Error} compilation failed'" | kak -p ${kak_session}
+      fi
+    } > /dev/null 2>&1 < /dev/null & }
+  }
+  define-command cmakei %{ nop %sh{ {
+      cmake --build build --target install -- -j6
+      res=$?
+      if [ $res -eq 0 ]; then
+        echo "eval -client '$kak_client' 'echo -debug install success'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo install success'" | kak -p ${kak_session}
+      else
+        echo "eval -client '$kak_client' 'echo -debug install failed'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -markup {Error} install failed'" | kak -p ${kak_session}
+      fi
+    } > /dev/null 2>&1 < /dev/null & }
+  }
   declare-user-mode cmake
-  map global user   'c' ':enter-user-mode cmake<ret>'                                  -docstring 'enter make mode'
-  map global cmake  'c' ':terminal ccmake -S . -B build<ret>'                          -docstring 'configure cmake'
-  map global cmake  'b' ':terminal cmake --build build -- -j 8<ret>'                   -docstring 'build with cmake'
-  map global cmake  'i' ':terminal cmake --build build --target install -- -j 8<ret>'  -docstring 'install with cmake'
+  map global user   'c' ':enter-user-mode cmake<ret>'         -docstring 'enter make mode'
+  map global cmake  'c' ':terminal ccmake -S . -B build<ret>' -docstring 'configure cmake'
+  map global cmake  'b' ':cmakeb<ret>'                        -docstring 'build with cmake'
+  map global cmake  'i' ':cmakei<ret>'                        -docstring 'install with cmake'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
@@ -134,16 +160,19 @@ def git-toggle-blame %{
 }
 def git-hide-diff %{ rmhl window/git-diff }
 declare-user-mode git
-map global user 'g' ':enter-user-mode git<ret>'  -docstring 'enter git mode' 
-map global git b ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
-map global git l ': git log<ret>'                -docstring 'log'
-map global git c ': git commit<ret>'             -docstring 'commit'
-map global git d ': git diff<ret>'               -docstring 'diff'
-map global git s ': git status<ret>'             -docstring 'status'
-map global git h ': git show-diff<ret>'          -docstring 'show diff'
-map global git H ': git-hide-diff<ret>'          -docstring 'hide diff'
-map global git w ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
-map global git L ': git-log-lines<ret>'          -docstring 'log blame'
+map global user 'g' ':enter-user-mode git<ret>'    -docstring 'enter git mode' 
+map global git 'b' ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
+map global git 'l' ': git log<ret>'                -docstring 'log'
+map global git 'c' ': git commit<ret>'             -docstring 'commit'
+map global git 'd' ': git diff<ret>'               -docstring 'diff'
+map global git 's' ': git status<ret>'             -docstring 'status'
+map global git 'h' ': git show-diff<ret>'          -docstring 'show diff'
+map global git 'H' ': git-hide-diff<ret>'          -docstring 'hide diff'
+map global git 'w' ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
+map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
+# chain commands
+map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next hunk'
+map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
 
 # System clipboard handling
 # ─────────────────────────
