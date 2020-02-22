@@ -24,52 +24,35 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 # add-highlighter global/ show-whitespaces -only-trailing 
 
-# Filetype specific hooks
-# ───────────────────────
-
-hook global WinSetOption filetype=python %{
-  jedi-enable-autocomplete
-  set-option global lintcmd kak_pylint
-  # set-option global lintcmd 'flake8'
-  lint-enable
-}
-
-map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
-
 # Status line
 # ───────────
+declare-option -docstring 'name of the git executable' \
+    str modeline_git_val
 declare-option -docstring 'name of the git branch holding the current buffer' \
     str modeline_git_branch
 
 hook global WinCreate .* %{
+    # Done in two pass to deal with colors
+    hook window NormalIdle .* %{ evaluate-commands %sh{
+        repo=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --git-dir 2> /dev/null)
+        if [ -n "${repo}" ]; then
+            printf 'set window modeline_git_val "git:"'
+        else
+            printf 'set window modeline_git_val ""'
+        fi
+    } }
     hook window NormalIdle .* %{ evaluate-commands %sh{
         branch=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --abbrev-ref HEAD 2>/dev/null)
         if [ -n "${branch}" ]; then
             printf 'set window modeline_git_branch %%{%s}' "${branch}"
         else
-            printf 'set window modeline_git_branch %%{%s}' "none"
+            printf 'set window modeline_git_branch ""'
         fi
     } }
 }
-set-option global modelinefmt '{{mode_info}} {green}%val{bufname}{default} on {magenta}%val{client}{default} git:{yellow}%opt{modeline_git_branch}{default} {{context_info}} {cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
-
-# Highlight the word under the cursor
-# ───────────────────────────────────
-
-declare-option -hidden regex curword
-set-face global CurWord default,rgb:4a4a4a
-
-hook global NormalIdle .* %{
-  eval -draft %{
-    try %{
-      exec <space><a-i>w <a-k>\A\w+\z<ret>
-      set-option buffer curword "\b\Q%val{selection}\E\b"
-    } catch %{
-      set-option buffer curword ''
-    }
-  }
-}
-add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
+set-option global modelinefmt '{{context_info}} {{mode_info}}
+on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}
+%opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
 
 # Custom mappings
 # ───────────────
@@ -87,8 +70,66 @@ hook global InsertChar '[jj]' %{
     execute-keys <esc>
   }
 }
+
+# comment with #
+map global normal '#' :comment-line<ret>
+
 # clear search buffer
 map global user ' ' ':set-register / ""<ret><c-l>' -docstring 'clear search'
+
+# Git
+def git-show-blamed-commit %{
+  git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
+}
+def git-log-lines %{
+  git log -L %sh{
+    anchor="${kak_selection_desc%,*}"
+    anchor_line="${anchor%.*}"
+    echo "$anchor_line,$kak_cursor_line:$kak_buffile"
+  }
+}
+def git-toggle-blame %{
+  try %{
+    add-highlighter window/git-blame group
+    remove-highlighter window/git-blame
+    git blame
+  } catch %{
+    git hide-blame
+  }
+}
+def git-hide-diff %{ remove-highlighter window/git-diff }
+declare-user-mode git
+map global user 'g' ':enter-user-mode git<ret>'    -docstring 'enter git mode' 
+map global git 'b' ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
+map global git 'l' ': git log<ret>'                -docstring 'log'
+map global git 'c' ': git commit<ret>'             -docstring 'commit'
+map global git 'd' ': git diff<ret>'               -docstring 'diff'
+map global git 's' ': git status<ret>'             -docstring 'status'
+map global git 'h' ': git show-diff<ret>'          -docstring 'show diff'
+map global git 'H' ': git-hide-diff<ret>'          -docstring 'hide diff'
+map global git 'w' ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
+map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
+# chain commands
+map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next hunk'
+map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
+
+# Enable <tab>/<s-tab> for insert completion selection
+# ──────────────────────────────────────────────────────
+
+hook global InsertCompletionShow .* %{ map window insert <tab> <c-n>; map window insert <s-tab> <c-p> }
+hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p> }
+
+# Filetype specific
+# ─────────────────
+
+hook global WinSetOption filetype=python %{
+  jedi-enable-autocomplete
+  set-option global lintcmd kak_pylint
+  # set-option global lintcmd 'flake8'
+  lint-enable
+}
+
+map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
 
 # C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp) %{
@@ -138,41 +179,23 @@ hook global WinSetOption filetype=python %{
   map global lint-python 'p' ':lint-previous-error<ret>'  -docstring 'previous error'
 }
 
-# Git
-def git-show-blamed-commit %{
-  git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
-}
-def git-log-lines %{
-  git log -L %sh{
-    anchor="${kak_selection_desc%,*}"
-    anchor_line="${anchor%.*}"
-    echo "$anchor_line,$kak_cursor_line:$kak_buffile"
+# Highlight the word under the cursor
+# ───────────────────────────────────
+
+declare-option -hidden regex curword
+set-face global CurWord default,rgb:4a4a4a
+
+hook global NormalIdle .* %{
+  eval -draft %{
+    try %{
+      exec <space><a-i>w <a-k>\A\w+\z<ret>
+      set-option buffer curword "\b\Q%val{selection}\E\b"
+    } catch %{
+      set-option buffer curword ''
+    }
   }
 }
-def git-toggle-blame %{
-  try %{
-    addhl window/git-blame group
-    rmhl window/git-blame
-    git blame
-  } catch %{
-    git hide-blame
-  }
-}
-def git-hide-diff %{ rmhl window/git-diff }
-declare-user-mode git
-map global user 'g' ':enter-user-mode git<ret>'    -docstring 'enter git mode' 
-map global git 'b' ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
-map global git 'l' ': git log<ret>'                -docstring 'log'
-map global git 'c' ': git commit<ret>'             -docstring 'commit'
-map global git 'd' ': git diff<ret>'               -docstring 'diff'
-map global git 's' ': git status<ret>'             -docstring 'status'
-map global git 'h' ': git show-diff<ret>'          -docstring 'show diff'
-map global git 'H' ': git-hide-diff<ret>'          -docstring 'hide diff'
-map global git 'w' ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
-map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
-# chain commands
-map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next hunk'
-map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
+add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 
 # System clipboard handling
 # ─────────────────────────
@@ -187,42 +210,6 @@ evaluate-commands %sh{
     printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
 }
 
-# Various mappings
-# ────────────────
-
-map global normal '#' :comment-line<ret>
-
-hook global -always BufOpenFifo '\*grep\*' %{ map -- global normal - ':grep-next-match<ret>' }
-hook global -always BufOpenFifo '\*make\*' %{ map -- global normal - ':make-next-error<ret>' }
-
-# Enable <tab>/<s-tab> for insert completion selection
-# ──────────────────────────────────────────────────────
-
-hook global InsertCompletionShow .* %{ map window insert <tab> <c-n>; map window insert <s-tab> <c-p> }
-hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p> }
-
-# Helper commands
-# ───────────────
-
-define-command mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } }
-
-define-command ide %{
-  rename-client main
-  set-option global jumpclient main
-
-  new rename-client tools
-  set-option global toolsclient tools
-
-  new rename-client docs
-  set-option global docsclient docs
-}
-
-define-command delete-buffers-matching -params 1 %{
-  evaluate-commands -buffer * %{
-    evaluate-commands %sh{ case "$kak_buffile" in $1) echo "delete-buffer" ;; esac }
-  }
-}
-
 # Plugins
 # ───────
 
@@ -230,10 +217,7 @@ define-command delete-buffers-matching -params 1 %{
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
 
-# buffers
-plug "Delapouite/kakoune-buffers" %{
-  map global user 'b' ': enter-buffers-mode<ret>' -docstring 'buffers manipulation'
-}
+## External commands
 
 # fzf
 plug "andreyorst/fzf.kak" config %{
@@ -252,10 +236,26 @@ plug "andreyorst/fzf.kak" config %{
   }
 }
 
-# text manipulation
+## Buffers
+
+plug "Delapouite/kakoune-buffers" %{
+  map global user 'b' ': enter-buffers-mode<ret>' -docstring 'buffers manipulation'
+}
+
+## Selection
+
+# move blocks
+plug "alexherbo2/move-line.kak" %{
+  map global normal 'J' ': move-line-below<ret>'
+  map global normal 'K' ': move-line-above<ret>'
+}
+
+# special split
 plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
+
+## Text
 
 # surround
 plug "alexherbo2/auto-pairs.kak"
@@ -266,12 +266,6 @@ plug "h-youhei/kakoune-surround" %{
   map global surround c ':change-surround<ret>'        -docstring 'change'
   map global surround d ':delete-surround<ret>'        -docstring 'delete'
   map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
-}
-
-# move blocks
-plug "alexherbo2/move-line.kak" %{
-  map global normal 'J' ': move-line-below<ret>'
-  map global normal 'K' ': move-line-above<ret>'
 }
 
 # completion
