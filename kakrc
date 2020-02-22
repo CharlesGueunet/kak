@@ -136,12 +136,13 @@ hook global WinSetOption filetype=(c|cpp) %{
   define-command cmakeb %{ nop %sh{ {
       cmake --build build -- -j6
       res=$?
+      date=$(date)
       if [ $res -eq 0 ]; then
-        echo "eval -client '$kak_client' 'echo -debug compilation success'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -debug compilation success ${date}'" | kak -p ${kak_session}
         echo "eval -client '$kak_client' 'echo compilation success'" | kak -p ${kak_session}
       else
         echo "eval -client '$kak_client' 'echo -debug compilation failed'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo -markup {Error} compilation failed'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -markup {Error} compilation failed ${date}'" | kak -p ${kak_session}
       fi
     } > /dev/null 2>&1 < /dev/null & }
   }
