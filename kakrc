@@ -159,10 +159,12 @@ hook global WinSetOption filetype=(c|cpp) %{
     } > /dev/null 2>&1 < /dev/null & }
   }
   declare-user-mode cmake
-  map global user   'c' ':enter-user-mode cmake<ret>'         -docstring 'enter make mode'
-  map global cmake  'c' ':terminal ccmake -S . -B build<ret>' -docstring 'configure cmake'
-  map global cmake  'b' ':cmakeb<ret>'                        -docstring 'build with cmake'
-  map global cmake  'i' ':cmakei<ret>'                        -docstring 'install with cmake'
+  map global user   'c' ':enter-user-mode cmake<ret>'                                 -docstring 'enter CMake mode'
+  map global cmake  'c' ':terminal ccmake -S . -B build<ret>'                         -docstring 'configure CMake'
+  map global cmake  'b' ':cmakeb<ret>'                                                -docstring 'build (async)'
+  map global cmake  'B' ':terminal cmake --build build -- -j 6<ret>'                  -docstring 'build in new terminal'
+  map global cmake  'i' ':cmakei<ret>'                                                -docstring 'install (async)'
+  map global cmake  'I' ':terminal cmake --build build --target install -- -j 6<ret>' -docstring 'install in new terminal'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
