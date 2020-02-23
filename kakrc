@@ -122,15 +122,6 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # Filetype specific
 # ─────────────────
 
-hook global WinSetOption filetype=python %{
-  jedi-enable-autocomplete
-  set-option global lintcmd kak_pylint
-  # set-option global lintcmd 'flake8'
-  lint-enable
-}
-
-map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
-
 # C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp) %{
   define-command cmakeb %{ nop %sh{ {
@@ -173,13 +164,24 @@ hook global WinSetOption filetype=(c) %{
   map global user -docstring 'alternate header/source' 'a' ':c-alternative-file<ret>'
 }
 
-# Python: lint
+# Python
 hook global WinSetOption filetype=python %{
+  jedi-enable-autocomplete
+  set-option global lintcmd kak_pylint
+  # set-option global lintcmd 'flake8'
+  lint-enable
+
   declare-user-mode lint-python
   map global user 'l' ':enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
   map global lint-python 'l' ':lint<ret>'                 -docstring 'update lint'
   map global lint-python 'n' ':lint-next-error<ret>'      -docstring 'next error'
   map global lint-python 'p' ':lint-previous-error<ret>'  -docstring 'previous error'
+}
+
+# XML
+map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
+hook global BufCreate .vt.* %{ # VTK file types are XML
+  set-option buffer filetype xml
 }
 
 # Highlight the word under the cursor
@@ -270,6 +272,14 @@ plug "h-youhei/kakoune-surround" %{
   map global surround d ':delete-surround<ret>'        -docstring 'delete'
   map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
 }
+
+# digits vim like
+plug "https://gitlab.com/Screwtapello/kakoune-inc-dec" %{
+  map global normal <c-a> ': inc-dec-modify-numbers + %val{count}<ret>'
+  map global normal <c-x> ': inc-dec-modify-numbers - %val{count}<ret>'
+}
+
+map global normal <c-w> ': echo %val{cursor_line}<ret>'
 
 # completion
 plug "ul/kak-lsp" do %{
