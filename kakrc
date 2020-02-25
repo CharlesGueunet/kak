@@ -124,38 +124,36 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 
 # C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp) %{
-  define-command cmakeb %{ nop %sh{ {
-      cmake --build build -- -j6
+  define-command -hidden -params 2 cmake-async %{ nop %sh{ {
+      cmake_opt=$1
+      notif_msg=$2
+      TMPFILE=`mktemp /tmp/compil_kak.XXXXXXXXXX`
+      cmake ${cmake_opt} 2> $TMPFILE
       res=$?
       date=$(date)
       if [ $res -eq 0 ]; then
-        echo "eval -client '$kak_client' 'echo -debug compilation success ${date}'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo compilation success'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -debug ${notif_msg} success ${date}'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo ${notif_msg} success'" | kak -p ${kak_session}
+        notify-send "${notif_msg} succes"
+        rm $TMPFILE
       else
-        echo "eval -client '$kak_client' 'echo -debug compilation failed'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo -markup {Error} compilation failed ${date}'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -debug ${TMPFILE}: ${notif_msg} failed'" | kak -p ${kak_session}
+        echo "eval -client '$kak_client' 'echo -markup {Error} ${notif_msg} failed ${date}'" | kak -p ${kak_session}
+        notify-send -u critical "${notif_msg} error: $(cat ${TMPFILE}|head -n 1)"
       fi
     } > /dev/null 2>&1 < /dev/null & }
   }
-  define-command cmakei %{ nop %sh{ {
-      cmake --build build --target install -- -j6
-      res=$?
-      if [ $res -eq 0 ]; then
-        echo "eval -client '$kak_client' 'echo -debug install success'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo install success'" | kak -p ${kak_session}
-      else
-        echo "eval -client '$kak_client' 'echo -debug install failed'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo -markup {Error} install failed'" | kak -p ${kak_session}
-      fi
-    } > /dev/null 2>&1 < /dev/null & }
+  define-command cmake-build-async -docstring "Asynchronous build the build folder" %{
+      cmake-async "--build build -- -j6" "Build"
+  }
+  define-command cmake-install-async -docstring "Asynchronous install the build folder" %{
+      cmake-async "--build build --target install -- -j6" "Install"
   }
   declare-user-mode cmake
   map global user   'c' ':enter-user-mode cmake<ret>'                                 -docstring 'enter CMake mode'
   map global cmake  'c' ':terminal ccmake -S . -B build<ret>'                         -docstring 'configure CMake'
-  map global cmake  'b' ':cmakeb<ret>'                                                -docstring 'build (async)'
-  map global cmake  'B' ':terminal cmake --build build -- -j 6<ret>'                  -docstring 'build in new terminal'
-  map global cmake  'i' ':cmakei<ret>'                                                -docstring 'install (async)'
-  map global cmake  'I' ':terminal cmake --build build --target install -- -j 6<ret>' -docstring 'install in new terminal'
+  map global cmake  'b' ':cmake-build-async<ret>'                                                -docstring 'build (async)'
+  map global cmake  'i' ':cmake-install-async<ret>'                                                -docstring 'install (async)'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
