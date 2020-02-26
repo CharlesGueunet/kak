@@ -77,18 +77,34 @@ map global normal '#' :comment-line<ret>
 # clear search buffer
 map global user ' ' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
+# Line selection
+# https://github.com/mawww/kakoune/issues/1285
+define-command -params 1 extend-line-down %{
+  exec "<a-:>%arg{1}X"
+}
+define-command -params 1 extend-line-up %{
+  exec "<a-:><a-;>%arg{1}K<a-;>"
+  try %{
+    exec -draft ';<a-K>\n<ret>'
+    exec X
+  }
+  exec '<a-;><a-X>'
+}
+map global normal x ':extend-line-down %val{count}<ret>'
+map global normal X ':extend-line-up %val{count}<ret>'
+
 # Git
-def git-show-blamed-commit %{
+define-command git-show-blamed-commit %{
   git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
 }
-def git-log-lines %{
+define-command git-log-lines %{
   git log -L %sh{
     anchor="${kak_selection_desc%,*}"
     anchor_line="${anchor%.*}"
     echo "$anchor_line,$kak_cursor_line:$kak_buffile"
   }
 }
-def git-toggle-blame %{
+define-command git-toggle-blame %{
   try %{
     add-highlighter window/git-blame group
     remove-highlighter window/git-blame
@@ -97,7 +113,9 @@ def git-toggle-blame %{
     git hide-blame
   }
 }
-def git-hide-diff %{ remove-highlighter window/git-diff }
+define-command git-hide-diff %{
+  remove-highlighter window/git-diff
+}
 declare-user-mode git
 map global user 'g' ':enter-user-mode git<ret>'    -docstring 'enter git mode' 
 map global git 'b' ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
