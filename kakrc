@@ -75,7 +75,7 @@ hook global InsertChar '[jj]' %{
 map global normal '#' :comment-line<ret>
 
 # clear search buffer
-map global user ' ' ':set-register / ""<ret><c-l>' -docstring 'clear search'
+map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
 # Line selection
 # https://github.com/mawww/kakoune/issues/1285
@@ -295,7 +295,14 @@ plug "https://gitlab.com/Screwtapello/kakoune-inc-dec" %{
   map global normal <c-x> ': inc-dec-modify-numbers - %val{count}<ret>'
 }
 
-map global normal <c-w> ': echo %val{cursor_line}<ret>'
+# navigation
+plug "danr/kakoune-easymotion" %{
+  map global user ' ' ': enter-user-mode easymotion<ret>' -docstring 'easymotion'
+  map global easymotion 'b' ': easy-motion-b<ret>' -docstring 'word ←'
+  map global easymotion 'B' ': easy-motion-B<ret>' -docstring 'Word ←'
+  unmap global easymotion 'q'
+  unmap global easymotion 'Q'
+}
 
 # completion
 plug "ul/kak-lsp" do %{
