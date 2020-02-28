@@ -145,6 +145,7 @@ hook global WinSetOption filetype=(c|cpp) %{
   define-command -hidden -params 2 cmake-async %{ nop %sh{ {
       cmake_opt=$1
       notif_msg=$2
+      echo "eval -client '$kak_client' 'echo -debug ${notif_msg} start ...'" | kak -p ${kak_session}
       TMPFILE=`mktemp /tmp/compil_kak.XXXXXXXXXX`
       cmake ${cmake_opt} 2> $TMPFILE
       res=$?
