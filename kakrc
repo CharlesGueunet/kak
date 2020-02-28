@@ -152,27 +152,46 @@ hook global WinSetOption filetype=(c|cpp) %{
       date=$(date)
       if [ $res -eq 0 ]; then
         echo "eval -client '$kak_client' 'echo -debug ${notif_msg} success ${date}'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo ${notif_msg} success'" | kak -p ${kak_session}
         notify-send "${notif_msg} succes"
         rm $TMPFILE
       else
         echo "eval -client '$kak_client' 'echo -debug ${TMPFILE}: ${notif_msg} failed'" | kak -p ${kak_session}
-        echo "eval -client '$kak_client' 'echo -markup {Error} ${notif_msg} failed ${date}'" | kak -p ${kak_session}
         notify-send -u critical "${notif_msg} error: $(cat ${TMPFILE}|head -n 1)"
       fi
     } > /dev/null 2>&1 < /dev/null & }
   }
-  define-command cmake-build-async -docstring "Asynchronous build the build folder" %{
+  define-command cmake-build-async -docstring "Silently build" %{
       cmake-async "--build build -- -j6" "Build"
   }
-  define-command cmake-install-async -docstring "Asynchronous install the build folder" %{
+  define-command cmake-install-async -docstring "Silently install" %{
       cmake-async "--build build --target install -- -j6" "Install"
   }
+  define-command -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
+      cmake_opt=$1
+      notif_msg=$2
+      echo "eval -client '$kak_client' 'echo -debug ${notif_msg} start ...'" | kak -p ${kak_session}
+      TMPFILE=$(mktemp -d "${TMPDIR:-/tmp}"/kak-build.XXXXXXXX)/fifo
+      mkfifo ${TMPFILE}
+      ( cmake ${cmake_opt} > $TMPFILE 2>&1 & ) > /dev/null 2>&1 < /dev/null
+      printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
+                edit! -fifo ${TMPFILE} *${notif_msg}* -scroll
+                hook -always -once buffer BufCloseFifo .* %{ nop %sh{ rm -r $(dirname ${output}) } }
+            }"
+    }
+  }
+  define-command cmake-build-fifo -docstring "Verbose build" %{
+      cmake-fifo "--build build -- -j6" "Build"
+  }
+  define-command cmake-install-fifo -docstring "Verbose install" %{
+      cmake-fifo "--build build --target install -- -j6" "Install"
+  }
   declare-user-mode cmake
-  map global user   'c' ':enter-user-mode cmake<ret>'                                 -docstring 'enter CMake mode'
-  map global cmake  'c' ':terminal ccmake -S . -B build<ret>'                         -docstring 'configure CMake'
-  map global cmake  'b' ':cmake-build-async<ret>'                                                -docstring 'build (async)'
-  map global cmake  'i' ':cmake-install-async<ret>'                                                -docstring 'install (async)'
+  map global user   'c' ':enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
+  map global cmake  'c' ':terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
+  map global cmake  'b' ':cmake-build-async<ret>'             -docstring 'silent build'
+  map global cmake  'B' ':cmake-build-fifo<ret>'              -docstring 'verbose build'
+  map global cmake  'i' ':cmake-install-async<ret>'           -docstring 'silent install'
+  map global cmake  'I' ':cmake-install-fifo<ret>'            -docstring 'verbose install'
 }
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
