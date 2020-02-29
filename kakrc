@@ -172,7 +172,7 @@ hook global WinSetOption filetype=(c|cpp) %{
       echo "eval -client '$kak_client' 'echo -debug ${notif_msg} start ...'" | kak -p ${kak_session}
       TMPFILE=$(mktemp -d "${TMPDIR:-/tmp}"/kak-build.XXXXXXXX)/fifo
       mkfifo ${TMPFILE}
-      ( cmake ${cmake_opt} > $TMPFILE 2>&1 & ) > /dev/null 2>&1 < /dev/null
+      ( cmake ${cmake_opt} > $TMPFILE 2>&1 && notify-send "${notif_msg} sucess" || notify-send -u critical "${notif_msg} failed" & ) > /dev/null 2>&1 < /dev/null
       printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
                 edit! -fifo ${TMPFILE} *${notif_msg}* -scroll
                 hook -always -once buffer BufCloseFifo .* %{ nop %sh{ rm -r $(dirname ${output}) } }
