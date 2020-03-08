@@ -141,7 +141,7 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # ─────────────────
 
 # C / CPP: CMake
-hook global WinSetOption filetype=(c|cpp) %{
+hook global WinSetOption filetype=(c|cpp|cmake) %{
   define-command -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
       cmake_title=$2
@@ -259,12 +259,6 @@ plug "Delapouite/kakoune-buffers" %{
 }
 
 ## Selection
-
-# move blocks
-plug "alexherbo2/move-line.kak" %{
-  map global normal 'J' ': move-line-below<ret>'
-  map global normal 'K' ': move-line-above<ret>'
-}
 
 # special split
 plug "alexherbo2/split-object.kak" %{
