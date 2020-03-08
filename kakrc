@@ -264,6 +264,7 @@ plug "Delapouite/kakoune-buffers" %{
 plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
+plug "alexherbo2/type-expand.kak" # for snippets
 
 ## Text
 
@@ -292,6 +293,9 @@ plug "danr/kakoune-easymotion" %{
   unmap global easymotion 'q'
   unmap global easymotion 'Q'
 }
+
+# snippet
+plug "alexherbo2/snippets.kak"
 
 # completion
 plug "ul/kak-lsp" do %{
