@@ -142,7 +142,7 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 
 # C / CPP: CMake
 hook global WinSetOption filetype=(c|cpp|cmake) %{
-  define-command -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
+  define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
       cmake_title=$2
       fifo_file=$(mktemp -d "${TMPDIR:-/tmp}"/kak-build.XXXXXXXX)/fifo
@@ -154,10 +154,10 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
             }"
     }
   }
-  define-command cmake-build -docstring "Verbose build" %{
+  define-command -override cmake-build -docstring "Verbose build" %{
       cmake-fifo "--build build -- -j6" "Build"
   }
-  define-command cmake-install -docstring "Verbose install" %{
+  define-command -override cmake-install -docstring "Verbose install" %{
       cmake-fifo "--build build --target install -- -j6" "Install"
   }
   declare-user-mode cmake
