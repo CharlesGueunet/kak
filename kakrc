@@ -70,6 +70,11 @@ hook global InsertChar '[jj]' %{
     execute-keys <esc>
   }
 }
+# select previous word (bash like)
+map global insert <c-w> '<a-;><a-B>'
+# move by paragraph (TODO: create GOTO mode)
+map global normal ')' ']p;'
+map global normal '(' '[p;'
 
 # comment with #
 map global normal '#' :comment-line<ret>
