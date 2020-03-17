@@ -149,12 +149,12 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 hook global WinSetOption filetype=(c|cpp|cmake) %{
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
-      cmake_title=$2
+      cmake_type=$2
       fifo_file=$(mktemp -d "${TMPDIR:-/tmp}"/kak-build.XXXXXXXX)/fifo
       mkfifo ${fifo_file}
-      ( cmake ${cmake_opt} > $fifo_file 2>&1 && notify-send "${cmake_title} sucess" || notify-send -u critical "${cmake_title} failed" & ) > /dev/null 2>&1 < /dev/null
+      ( cmake ${cmake_opt} > $fifo_file 2>&1 && notify-send "${cmake_type} sucess" || notify-send -u critical "${cmake_type} failed" & ) > /dev/null 2>&1 < /dev/null
       printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
-                edit! -fifo ${fifo_file} *${cmake_title}* -scroll
+                edit! -fifo ${fifo_file} *CMake* -scroll
                 hook -always -once buffer BufCloseFifo .* %{ nop %sh{ rm -r $(dirname ${fifo_file}) } }
             }"
     }
