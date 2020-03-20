@@ -1,6 +1,6 @@
 # User preference
 # ───────────────
-
+# colorscheme solarized-light # for light terminal
 set-option global ui_options ncurses_status_on_top=true
 # set-option -add global ui_options ncurses_assistant=dilbert
  
@@ -82,22 +82,6 @@ map global normal '#' :comment-line<ret>
 # clear search buffer
 map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
-# Line selection
-# https://github.com/mawww/kakoune/issues/1285
-define-command -params 1 extend-line-down %{
-  exec "<a-:>%arg{1}X"
-}
-define-command -params 1 extend-line-up %{
-  exec "<a-:><a-;>%arg{1}K<a-;>"
-  try %{
-    exec -draft ';<a-K>\n<ret>'
-    exec X
-  }
-  exec '<a-;><a-X>'
-}
-map global normal x ':extend-line-down %val{count}<ret>'
-map global normal X ':extend-line-up %val{count}<ret>'
-
 # Git
 define-command git-show-blamed-commit %{
   git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
@@ -146,6 +130,8 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # ─────────────────
 
 # C / CPP: CMake
+# TODO: option for nb cores
+# TODO: separate plugin
 hook global WinSetOption filetype=(c|cpp|cmake) %{
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
@@ -172,7 +158,9 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake  'B' ':cmake-build<ret>'                   -docstring 'verbose build'
   map global cmake  'i' ':eval -draft cmake-install<ret>'     -docstring 'silent install'
   map global cmake  'I' ':cmake-install<ret>'                 -docstring 'verbose install'
+  map global cmake  's' ':buffer *CMake*<ret>'                -docstring 'show CMake buffer'
 }
+
 hook global WinSetOption filetype=(cpp) %{
   map global user -docstring 'alternate header/source' 'a' ':cpp-alternative-file<ret>'
 }
@@ -205,6 +193,7 @@ hook global BufCreate .vt.* %{ # VTK file types are XML
 
 declare-option -hidden regex curword
 set-face global CurWord default,rgb:4a4a4a
+# set-face global CurWord default,rgb:ffcaca # for light terminal
 
 hook global NormalIdle .* %{
   eval -draft %{
@@ -269,7 +258,6 @@ plug "Delapouite/kakoune-buffers" %{
 plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
-plug "alexherbo2/type-expand.kak" # for snippets
 
 ## Text
 
@@ -298,9 +286,6 @@ plug "danr/kakoune-easymotion" %{
   unmap global easymotion 'q'
   unmap global easymotion 'Q'
 }
-
-# snippet
-plug "alexherbo2/snippets.kak"
 
 # completion
 plug "ul/kak-lsp" do %{
