@@ -59,6 +59,7 @@ on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cur
 
 map global normal , <space>
 map global normal <space> ,
+map global normal \' \"
 map global normal <ret> :
 map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
@@ -71,7 +72,7 @@ hook global InsertChar '[jj]' %{
   }
 }
 # select previous word (bash like)
-map global insert <c-w> '<a-;><a-B>'
+map global insert <c-w> '<a-;>B'
 # move by paragraph (TODO: create GOTO mode)
 map global normal ')' ']p;'
 map global normal '(' '[p;'
