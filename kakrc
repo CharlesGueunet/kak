@@ -260,10 +260,12 @@ plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
 plug "occivink/kakoune-phantom-selection" %{
-  map global normal f     ": phantom-selection-add-selection<ret>"
-  map global normal F     ": phantom-selection-select-all; phantom-selection-clear<ret>"
-  map global normal <a-f> ": phantom-selection-iterate-next<ret>"
-  map global normal <a-F> ": phantom-selection-iterate-prev<ret>"
+  declare-user-mode selection
+  map global user 's' ':enter-user-mode selection<ret>'                                     -docstring 'selection'
+  map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
+  map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
+  map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
+  map global selection <a-F> ": phantom-selection-iterate-prev<ret>"                        -docstring 'prev selection'
   map global insert <a-f> "<esc>: phantom-selection-iterate-next<ret>i"
   map global insert <a-F> "<esc>: phantom-selection-iterate-prev<ret>i"
 }
