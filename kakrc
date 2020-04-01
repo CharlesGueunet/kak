@@ -131,9 +131,14 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # ─────────────────
 
 # C / CPP: CMake
-# TODO: option for nb cores
 # TODO: separate plugin
 hook global WinSetOption filetype=(c|cpp|cmake) %{
+  declare-option -docstring 'build folder' str cmake_build_folder
+  declare-option -docstring 'nb core to build' int cmake_nb_cores
+
+  set-option buffer cmake_build_folder "build"
+  set-option global cmake_nb_cores 6
+
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
       cmake_type=$2
@@ -147,10 +152,10 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
     }
   }
   define-command -override cmake-build -docstring "Verbose build" %{
-      cmake-fifo "--build build -- -j6" "Build"
+      cmake-fifo "--build %opt{cmake_build_folder} -- -j %opt{cmake_nb_cores}" "Build"
   }
   define-command -override cmake-install -docstring "Verbose install" %{
-      cmake-fifo "--build build --target install -- -j6" "Install"
+      cmake-fifo "--build %opt{cmake_build_folder} --target install -- -j %opt{cmake_nb_cores}" "Install"
   }
   declare-user-mode cmake
   map global user   'c' ':enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
@@ -266,8 +271,8 @@ plug "occivink/kakoune-phantom-selection" %{
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
   map global selection <a-F> ": phantom-selection-iterate-prev<ret>"                        -docstring 'prev selection'
-  map global insert <a-f> "<esc>: phantom-selection-iterate-next<ret>i"
-  map global insert <a-F> "<esc>: phantom-selection-iterate-prev<ret>i"
+  map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>i"
+  map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>i"
 }
 
 ## Text
