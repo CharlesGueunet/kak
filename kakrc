@@ -22,7 +22,9 @@ add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf ' ' -spc ' '
 add-highlighter global/ show-matching
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
-# add-highlighter global/ show-whitespaces -only-trailing 
+# add-highlighter global/ show-whitespaces -only-trailing
+ 
+set-face global Whitespace rgb:465258,default
 
 # Status line
 # ───────────
