@@ -141,6 +141,9 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   set-option buffer cmake_build_folder "build"
   set-option global cmake_nb_cores 6
 
+  define-command -override cmake-set-nb_cores -params 1 %{
+    set-option global cmake_nb_cores %arg{1}
+  }
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
       cmake_type=$2
@@ -167,6 +170,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake  'i' ':eval -draft cmake-install<ret>'     -docstring 'silent install'
   map global cmake  'I' ':cmake-install<ret>'                 -docstring 'verbose install'
   map global cmake  's' ':buffer *CMake*<ret>'                -docstring 'show CMake buffer'
+  map global cmake  'p' ':cmake-set-nb_cores '                -docstring 'set number of cores to use'
 }
 
 hook global WinSetOption filetype=(cpp) %{
