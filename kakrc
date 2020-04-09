@@ -75,15 +75,23 @@ hook global InsertChar '[jj]' %{
 }
 # select previous word (bash like)
 map global insert <c-w> '<a-;>B'
-# move by paragraph (TODO: create GOTO mode)
-map global normal ')' ']p;'
-map global normal '(' '[p;'
+
+declare-option -hidden int kak_opt_autowrap_column
+set-option global kak_opt_autowrap_column 80
+# format with =
+map global normal = '|fmt -w $kak_opt_autowrap_column<ret>'
 
 # comment with #
 map global normal '#' :comment-line<ret>
 
 # clear search buffer
 map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
+
+# Move mode
+declare-user-mode move
+map global user 'v' ':enter-user-mode -lock move<ret>'    -docstring 'enter move mode' 
+map global move 'j' ']p;' -docstring 'paragraph below'
+map global move 'k' '[p;' -docstring 'paragraph above'
 
 # Git
 define-command git-show-blamed-commit %{
@@ -163,14 +171,14 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
       cmake-fifo "--build %opt{cmake_build_folder} --target install -- -j %opt{cmake_nb_cores}" "Install"
   }
   declare-user-mode cmake
-  map global user   'c' ':enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
-  map global cmake  'c' ':terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
-  map global cmake  'b' ':eval -draft cmake-build<ret>'       -docstring 'silent build'
-  map global cmake  'B' ':cmake-build<ret>'                   -docstring 'verbose build'
-  map global cmake  'i' ':eval -draft cmake-install<ret>'     -docstring 'silent install'
-  map global cmake  'I' ':cmake-install<ret>'                 -docstring 'verbose install'
-  map global cmake  's' ':buffer *CMake*<ret>'                -docstring 'show CMake buffer'
-  map global cmake  'p' ':cmake-set-nb_cores '                -docstring 'set number of cores to use'
+  map global user   'c' ': enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
+  map global cmake  'c' ': terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
+  map global cmake  'b' ': eval -draft cmake-build<ret>'       -docstring 'silent build'
+  map global cmake  'B' ': cmake-build<ret>'                   -docstring 'verbose build'
+  map global cmake  'i' ': eval -draft cmake-install<ret>'     -docstring 'silent install'
+  map global cmake  'I' ': cmake-install<ret>'                 -docstring 'verbose install'
+  map global cmake  's' ': buffer *CMake*<ret>'                -docstring 'show CMake buffer'
+  map global cmake  'p' ': cmake-set-nb_cores '                -docstring 'set number of cores to use'
 }
 
 hook global WinSetOption filetype=(cpp) %{
@@ -188,10 +196,10 @@ hook global WinSetOption filetype=python %{
   lint-enable
 
   declare-user-mode lint-python
-  map global user 'l' ':enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
-  map global lint-python 'l' ':lint<ret>'                 -docstring 'update lint'
-  map global lint-python 'n' ':lint-next-error<ret>'      -docstring 'next error'
-  map global lint-python 'p' ':lint-previous-error<ret>'  -docstring 'previous error'
+  map global user 'l' ': enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
+  map global lint-python 'l' ': lint<ret>'                 -docstring 'update lint'
+  map global lint-python 'n' ': lint-next-error<ret>'      -docstring 'next error'
+  map global lint-python 'p' ': lint-previous-error<ret>'  -docstring 'previous error'
 }
 
 # XML
@@ -287,11 +295,11 @@ plug "occivink/kakoune-phantom-selection" %{
 plug "alexherbo2/auto-pairs.kak"
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
-  map global normal '<c-s>' ':enter-user-mode surround<ret>'
-  map global surround s ':surround<ret>'               -docstring 'surround'
-  map global surround c ':change-surround<ret>'        -docstring 'change'
-  map global surround d ':delete-surround<ret>'        -docstring 'delete'
-  map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+  map global normal '<c-s>' ': enter-user-mode surround<ret>'
+  map global surround s ': surround<ret>'               -docstring 'surround'
+  map global surround c ': change-surround<ret>'        -docstring 'change'
+  map global surround d ': delete-surround<ret>'        -docstring 'delete'
+  map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
 }
 
 # digits vim like
