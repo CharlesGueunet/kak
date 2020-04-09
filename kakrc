@@ -89,9 +89,15 @@ map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
 # Move mode
 declare-user-mode move
-map global user 'v' ':enter-user-mode -lock move<ret>'    -docstring 'enter move mode' 
-map global move 'j' ']p;' -docstring 'paragraph below'
-map global move 'k' '[p;' -docstring 'paragraph above'
+map global user 'v' ': enter-user-mode -lock move<ret>'    -docstring 'enter move mode' 
+map global move 'k' '[p;'      -docstring 'paragraph above'
+map global move 'j' ']p;'      -docstring 'paragraph below'
+map global move 'I' '[i;'      -docstring 'indent level above'
+map global move 'i' ']i<a-h>;' -docstring 'indent level below'
+map global move '{' '[};'      -docstring 'brace block above'
+map global move '}' ']};'      -docstring 'brace block below'
+map global move '(' '[);'      -docstring 'parenthesis block above'
+map global move ')' ']);'      -docstring 'parenthesis block below'
 
 # Git
 define-command git-show-blamed-commit %{
