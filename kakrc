@@ -3,7 +3,7 @@
 # colorscheme solarized-light # for light terminal
 set-option global ui_options ncurses_status_on_top=true
 # set-option -add global ui_options ncurses_assistant=dilbert
- 
+
 set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
@@ -252,6 +252,15 @@ evaluate-commands %sh{
     printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
 }
 
+# Persistent command line
+# ───────────────────────
+
+declare-option str histo_file
+set-option global histo_file %val{config}
+set-option -add global histo_file "/.kak_history"
+hook global KakEnd .* %{ echo -to-file %opt{histo_file} -quoting kakoune reg : %reg{:} }
+hook global KakBegin .* %{ try %{ source %opt{histo_file} } }
+
 # Plugins
 # ───────
 
@@ -292,7 +301,7 @@ plug "alexherbo2/split-object.kak" %{
 }
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
-  map global user 's' ':enter-user-mode selection<ret>'                                     -docstring 'selection'
+  map global user 's' ':enter-user-mode selection<ret>'                                     -docstring 'selection manipulations'
   map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
