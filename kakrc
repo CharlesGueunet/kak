@@ -252,15 +252,6 @@ evaluate-commands %sh{
     printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
 }
 
-# Persistent command line
-# ───────────────────────
-
-declare-option str histo_file
-set-option global histo_file %val{config}
-set-option -add global histo_file "/.kak_history"
-hook global KakEnd .* %{ echo -to-file %opt{histo_file} -quoting kakoune reg : %reg{:} }
-hook global KakBegin .* %{ try %{ source %opt{histo_file} } }
-
 # Plugins
 # ───────
 
