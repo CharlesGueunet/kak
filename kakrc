@@ -88,22 +88,24 @@ map global normal '#' :comment-line<ret>
 map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
 
 # Move mode
-declare-user-mode move
-map global user 'v' ': enter-user-mode -lock move<ret>'    -docstring 'enter move mode' 
-map global move 'k' 'k'         -docstring 'line above'
-map global move 'j' 'j'         -docstring 'line below'
-map global move 'h' 'h'         -docstring 'left char'
-map global move 'l' 'l'         -docstring 'right char'
-map global move 'K' '[p;'       -docstring 'paragraph above'
-map global move 'J' ']p;'       -docstring 'paragraph below'
-map global move 'H' 'I<esc>'    -docstring 'line begining'
-map global move 'L' '<a-l>;'    -docstring 'line end'
-map global move 'I' '[i;I<esc>' -docstring 'indent level above'
-map global move 'i' ']i;I<esc>' -docstring 'indent level below'
-map global move '{' '[};'       -docstring 'brace block above'
-map global move '}' ']};'       -docstring 'brace block below'
-map global move '(' '[);'       -docstring 'parenthesis block above'
-map global move ')' ']);'       -docstring 'parenthesis block below'
+declare-user-mode quickmove
+map global user 'v' ': enter-user-mode -lock quickmove<ret>'    -docstring 'enter quickmove mode' 
+map global quickmove 'k' 'k'          -docstring 'line above'
+map global quickmove 'j' 'j'          -docstring 'line below'
+map global quickmove 'h' 'h'          -docstring 'left char'
+map global quickmove 'l' 'l'          -docstring 'right char'
+map global quickmove 'K' '[p;'        -docstring 'paragraph above'
+map global quickmove 'J' ']p;'        -docstring 'paragraph below'
+map global quickmove 'H' 'I<esc>'     -docstring 'line begining'
+map global quickmove 'L' '<a-l>;'     -docstring 'line end'
+map global quickmove 'I' '[i;I<esc>'  -docstring 'indent level above'
+map global quickmove 'i' ']i;I<esc>'  -docstring 'indent level below'
+map global quickmove '{' '[};'        -docstring 'brace block above'
+map global quickmove '}' ']};'        -docstring 'brace block below'
+map global quickmove '(' '[);'        -docstring 'parenthesis block above'
+map global quickmove ')' ']);'        -docstring 'parenthesis block below'
+map global quickmove 'n' '<esc><tab>' -docstring 'jump next position'
+map global quickmove 'p' '<esc><c-o>' -docstring 'jump previous position'
 
 # Git
 define-command git-show-blamed-commit %{
