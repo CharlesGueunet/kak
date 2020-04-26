@@ -74,7 +74,9 @@ hook global InsertChar '[jj]' %{
   }
 }
 # select previous word (bash like)
-map global insert <c-w> '<a-;>B'
+map global insert <c-w> '<a-;>h<a-;><a-B>'
+# open line above
+map global insert <c-o> '<a-;>O'
 
 declare-option -hidden int kak_opt_autowrap_column
 set-option global kak_opt_autowrap_column 80
@@ -294,7 +296,7 @@ plug "alexherbo2/split-object.kak" %{
 }
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
-  map global user 's' ':enter-user-mode selection<ret>'                                     -docstring 'selection manipulations'
+  map global user 's' ': enter-user-mode selection<ret>'                                    -docstring 'selection manipulations'
   map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
@@ -340,6 +342,10 @@ plug "ul/kak-lsp" do %{
     set-option global lsp_completion_trigger "execute-keys 'h<a-h><a-k>\S[^\h\n,=;*(){}\[\]]\z<ret>'"
     set-option global lsp_diagnostic_line_error_sign "!"
     set-option global lsp_diagnostic_line_warning_sign "?"
+    # hook global WinSetOption filetype=(cmake) %{
+    #     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
+    #     lsp-enable-window
+    # }
     hook global WinSetOption filetype=(c|cpp|rust) %{
         map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
         lsp-enable-window
@@ -349,11 +355,23 @@ plug "ul/kak-lsp" do %{
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
     }
-    hook global WinSetOption filetype=rust %{
-        set-option window lsp_server_configuration rust.clippy_preference="on"
-    }
     # hook global WinSetOption filetype=python %{
     #   set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
     # }
+    hook global WinSetOption filetype=rust %{
+        set-option window lsp_server_configuration rust.clippy_preference="on"
+    }
     hook global KakEnd .* lsp-exit
 }
+#snippets
+plug "occivink/kakoune-snippets" config %{
+    set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
+    set-option global snippets_auto_expand false
+    map global insert '<c-s>' '<a-;>: snippets-expand-trigger<ret><esc>'
+    map global insert '<c-n>' '<a-;>: snippets-select-next-placeholders<ret><esc>'
+    map global normal '<c-n>' ': snippets-select-next-placeholders<ret>'
+    declare-user-mode snippets
+    map global user 'S' ': enter-user-mode snippets<ret>' -docstring 'snippet menu'
+    map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
+}
+plug "andreyorst/kakoune-snippet-collection"

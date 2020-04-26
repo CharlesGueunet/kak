@@ -1,0 +1,1 @@
+vtkSmartPointer<${1:vtkObject}> ${0:myVar} = new ${1}::New();
