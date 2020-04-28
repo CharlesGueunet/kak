@@ -2,7 +2,6 @@
 # ───────────────
 # colorscheme solarized-light # for light terminal
 set-option global ui_options ncurses_status_on_top=true
-# set-option -add global ui_options ncurses_assistant=dilbert
 
 set-option global autoreload yes
 set-option global scrolloff 3,5
@@ -28,10 +27,8 @@ set-face global Whitespace rgb:465258,default
 
 # Status line
 # ───────────
-declare-option -docstring 'name of the git executable' \
-    str modeline_git_val
-declare-option -docstring 'name of the git branch holding the current buffer' \
-    str modeline_git_branch
+declare-option str modeline_git_val    ''
+declare-option str modeline_git_branch ''
 
 hook global WinCreate .* %{
     # Done in two pass to deal with colors
@@ -166,7 +163,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   set-option global cmake_nb_cores 6
 
   define-command -override cmake-set-nb_cores -params 1 %{
-    set-option global cmake_nb_cores %arg{1}
+      set-option global cmake_nb_cores %arg{1}
   }
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
