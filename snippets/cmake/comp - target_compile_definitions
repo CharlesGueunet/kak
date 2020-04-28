@@ -1,0 +1,1 @@
+target_compile_definitions(${1:target} ${2:PUBLIC} ${0:opt})

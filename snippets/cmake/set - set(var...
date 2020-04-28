@@ -1,0 +1,1 @@
+set(${1:variable} ${2:value} CACHE ${3:type} "${4:docstring}" ${0:FORCE})

@@ -1,0 +1,1 @@
+option(${1:variable} "${2:docstring}" ${0:ON})

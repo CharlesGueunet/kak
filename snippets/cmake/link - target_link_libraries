@@ -1,0 +1,1 @@
+target_link_libraries(${1:target} ${2:PUBLIC} ${0:LINKS})
