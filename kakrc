@@ -22,7 +22,10 @@ add-highlighter global/ show-matching
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 # add-highlighter global/ show-whitespaces -only-trailing
- 
+add-highlighter global/ column 80 default,rgb:232935
+add-highlighter global/ column 120 default,rgb:192531
+# add-highlighter global/ line '%val{cursor_line}' default,rgb:192531
+
 set-face global Whitespace rgb:465258,default
 
 # Status line
@@ -84,7 +87,13 @@ map global normal = '|fmt -w $kak_opt_autowrap_column<ret>'
 map global normal '#' :comment-line<ret>
 
 # clear search buffer
-map global user ',' ':set-register / ""<ret><c-l>' -docstring 'clear search'
+map global user ',' ': set-register / ""<ret><c-l>: execute-keys "; "<ret>' -docstring 'clear search'
+
+# multiple insert
+define-command -params 1 urk %{
+    execute-keys -with-hooks \;i.<esc>hd %arg{1} P %arg{1} Hs.<ret><a-space>c
+}
+map global user i %{:urk %val{count}<ret>} -docstring "countable insert"
 
 # Move mode
 declare-user-mode quickmove
@@ -105,6 +114,25 @@ map global quickmove '(' '[);'        -docstring 'parenthesis block above'
 map global quickmove ')' ']);'        -docstring 'parenthesis block below'
 map global quickmove 'n' '<esc><tab>' -docstring 'jump next position'
 map global quickmove 'p' '<esc><c-o>' -docstring 'jump previous position'
+
+# Secure save
+
+define-command -params 0..1 secure_write %{ evaluate-commands %sh{
+  if [ -z ${1+x} ]; then
+    # no param given: usual write
+    echo "write"
+  else
+    bufname=$1
+    if [ -e "${bufname}" ] && [ "${bufname}" != "${current_bufname}" ]; then
+      # file already exists and is not the current one
+      echo "echo 'Use w! to override existing file'"
+    else
+      echo "write ${bufname}"
+    fi
+  fi
+}}
+unalias global w write
+alias global w secure_write
 
 # Git
 define-command git-show-blamed-commit %{
@@ -250,7 +278,7 @@ evaluate-commands %sh{
     esac
 
     printf "map global user -docstring 'paste from clipboard' p '!%s<ret>'\n" "$paste"
-    printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
+    printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
 }
 
 # Plugins
@@ -270,9 +298,9 @@ plug "andreyorst/fzf.kak" config %{
   set-option global fzf_project_use_tilda true
   evaluate-commands %sh{
     if [ -n "$(command -v fd)" ]; then
-      echo "set-option global fzf_file_command %{fd . --no-ignore --type f --follow --hidden --exclude .git --exclude .svn}"
+      echo "set-option global fzf_file_command %{fd . --no-ignore --type f --follow --hidden --exclude .git --exclude .svn --exclude build* --exclude .ccls-cache}"
     else
-      echo "set-option global fzf_file_command %{find . \( -path '*/.svn*' -o -path '*/.git*' \) -prune -o -type f -follow -print}"
+      echo "set-option global fzf_file_command %{find . \( -path '*/.svn*' -o -path '*/.git*' -o -path '*/build*' -o -path '*/.ccls-cache*' \) -prune -o -type f -follow -print}"
     fi
     [ -n "$(command -v bat)" ] && echo "set-option global fzf_highlight_command bat"
     [ -n "${kak_opt_grepcmd}" ] && echo "set-option global fzf_sk_grep_command %{${kak_opt_grepcmd}}"
