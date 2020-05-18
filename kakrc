@@ -310,7 +310,8 @@ plug "andreyorst/fzf.kak" config %{
 ## Buffers
 
 plug "Delapouite/kakoune-buffers" %{
-  map global user 'b' ': enter-buffers-mode<ret>' -docstring 'buffers manipulation'
+  map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
+  map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
 
 ## Selection

@@ -1,0 +1,1 @@
+reinterpret_cast<${1:type}>(${0:var});
