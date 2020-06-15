@@ -15,6 +15,7 @@ set-option global grepcmd 'ag --column'
 set-face global Default default,black
 set-face global LineNumbers default,black
 set-face global StatusLine default,black
+set-face global BufferPadding default,black
 
 add-highlighter global/ number-lines -hlcursor -relative
 add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf ' ' -spc ' ' -nbsp '⍽'
@@ -322,7 +323,7 @@ plug "alexherbo2/split-object.kak" %{
 }
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
-  map global user 's' ': enter-user-mode selection<ret>'                                    -docstring 'selection manipulations'
+  map global user 'p' ': enter-user-mode selection<ret>'                                    -docstring 'phantom selection manipulations'
   map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
@@ -332,6 +333,11 @@ plug "occivink/kakoune-phantom-selection" %{
 }
 
 ## Text
+
+# objects
+plug 'delapouite/kakoune-text-objects' %{
+  text-object-map
+}
 
 # surround
 plug "alexherbo2/auto-pairs.kak"
@@ -345,7 +351,7 @@ plug "h-youhei/kakoune-surround" %{
 }
 
 # digits vim like
-plug "https://gitlab.com/Screwtapello/kakoune-inc-dec" %{
+plug "Screwtapello/kakoune-inc-dec" domain "gitlab.com" %{
   map global normal <c-a> ': inc-dec-modify-numbers + %val{count}<ret>'
   map global normal <c-x> ': inc-dec-modify-numbers - %val{count}<ret>'
 }
