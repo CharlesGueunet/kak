@@ -323,7 +323,7 @@ plug "alexherbo2/split-object.kak" %{
 }
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
-  map global user 'p' ': enter-user-mode selection<ret>'                                    -docstring 'phantom selection manipulations'
+  map global user 'f' ': enter-user-mode selection<ret>'                                    -docstring 'phantom selection manipulations'
   map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
