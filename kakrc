@@ -56,9 +56,10 @@ hook global WinCreate .* %{
 # left to right
 set-option global modelinefmt ''
 set-option -add global modelinefmt '{{context_info}}'
-set-option -add global modelinefmt ' {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
-set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
+set-option -add global modelinefmt ' {yellow}%opt{out_of_view_status_line}{default}'
 set-option -add global modelinefmt ' {{mode_info}}'
+set-option -add global modelinefmt ' on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
+set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
 
 # Custom mappings
 # ───────────────
@@ -338,10 +339,7 @@ plug "occivink/kakoune-phantom-selection" %{
   map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>i"
 }
 # count non visible selection
-plug "alexherbo2/out-of-view.kak" %{
-  set-option -add global modelinefmt ' {yellow}%opt{out_of_view_status_line}{default}'
-}
-
+plug "alexherbo2/out-of-view.kak"
 
 ## Text
 
