@@ -53,9 +53,12 @@ hook global WinCreate .* %{
         fi
     } }
 }
-set-option global modelinefmt '{{context_info}} {{mode_info}}
-on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}
-%opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
+# left to right
+set-option global modelinefmt ''
+set-option -add global modelinefmt '{{context_info}}'
+set-option -add global modelinefmt ' {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
+set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
+set-option -add global modelinefmt ' {{mode_info}}'
 
 # Custom mappings
 # ───────────────
@@ -67,13 +70,14 @@ map global normal <ret> :
 map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
 map global normal <a-tab> '<a-:>'
-# leave insert using jj
+
 hook global InsertChar '[jj]' %{
   try %{
     execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
     execute-keys <esc>
   }
 }
+
 # select previous word (bash like)
 map global insert <c-w> '<a-;>h<a-;><a-B>'
 # open line above
@@ -136,6 +140,7 @@ unalias global w write
 alias global w secure_write
 
 # Git
+
 define-command git-show-blamed-commit %{
   git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
 }
@@ -321,6 +326,7 @@ plug "Delapouite/kakoune-buffers" %{
 plug "alexherbo2/split-object.kak" %{
   map global normal <a-I> ': enter-user-mode split-object<ret>'
 }
+# one by one manip
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
   map global user 'f' ': enter-user-mode selection<ret>'                                    -docstring 'phantom selection manipulations'
@@ -331,6 +337,11 @@ plug "occivink/kakoune-phantom-selection" %{
   map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>i"
   map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>i"
 }
+# count non visible selection
+plug "alexherbo2/out-of-view.kak" %{
+  set-option -add global modelinefmt ' {yellow}%opt{out_of_view_status_line}{default}'
+}
+
 
 ## Text
 
@@ -407,3 +418,5 @@ plug "occivink/kakoune-snippets" config %{
     map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
+
+source ~/.config/kak/extra/i3.kak
