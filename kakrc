@@ -23,10 +23,10 @@ add-highlighter global/ show-matching
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 # add-highlighter global/ show-whitespaces -only-trailing
-add-highlighter global/ column 80 default,rgb:232935
-add-highlighter global/ column 120 default,rgb:192531
-# add-highlighter global/ line '%val{cursor_line}' default,rgb:192531
-
+add-highlighter global/ column 80 default,rgb:171717
+add-highlighter global/ column 120 default,rgb:191919
+set-face global PrimarySelection default,rgba:4a4a4a80
+set-face global SecondarySelection default,rgba:4a4a4a40
 set-face global Whitespace rgb:465258,default
 
 # Status line
@@ -76,6 +76,14 @@ hook global InsertChar '[jj]' %{
   try %{
     execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
     execute-keys <esc>
+  }
+}
+hook global WinSetOption filetype=(c|cpp) %{
+  hook buffer InsertChar '[,,]' %{
+    try %{
+      execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
+      execute-keys <<
+    }
   }
 }
 
@@ -260,7 +268,7 @@ hook global BufCreate .vt.* %{ # VTK file types are XML
 # ───────────────────────────────────
 
 declare-option -hidden regex curword
-set-face global CurWord default,rgb:4a4a4a
+set-face global CurWord default,rgba:4a4a4a50
 # set-face global CurWord default,rgb:ffcaca # for light terminal
 
 hook global NormalIdle .* %{
@@ -304,10 +312,6 @@ plug "Delapouite/kakoune-buffers" %{
 
 ## Selection
 
-# special split
-# plug "alexherbo2/split-object.kak" %{
-#   map global normal <a-I> ': enter-user-mode split-object<ret>'
-# }
 # one by one manip
 plug "occivink/kakoune-phantom-selection" %{
   declare-user-mode selection
@@ -397,5 +401,3 @@ plug "occivink/kakoune-snippets" config %{
     map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
-
-source ~/.config/kak/extra/i3.kak
