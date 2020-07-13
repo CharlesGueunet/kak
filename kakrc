@@ -25,8 +25,8 @@ add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 # add-highlighter global/ show-whitespaces -only-trailing
 add-highlighter global/ column 80 default,rgb:171717
 add-highlighter global/ column 120 default,rgb:191919
-set-face global PrimarySelection default,rgba:4a4a4a80
-set-face global SecondarySelection default,rgba:4a4a4a40
+set-face global PrimarySelection default,rgba:30308080
+set-face global SecondarySelection default,rgba:80303040
 set-face global Whitespace rgb:465258,default
 
 # Status line
@@ -268,7 +268,7 @@ hook global BufCreate .vt.* %{ # VTK file types are XML
 # ───────────────────────────────────
 
 declare-option -hidden regex curword
-set-face global CurWord default,rgba:4a4a4a50
+set-face global CurWord default,rgba:30303050
 # set-face global CurWord default,rgb:ffcaca # for light terminal
 
 hook global NormalIdle .* %{
