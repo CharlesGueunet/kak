@@ -33,6 +33,7 @@ set-face global Whitespace rgb:465258,default
 # ───────────
 declare-option str modeline_git_val    ''
 declare-option str modeline_git_branch ''
+declare-option str out_of_view_status_line ''
 
 hook global WinCreate .* %{
     # Done in two pass to deal with colors
@@ -334,6 +335,7 @@ plug 'delapouite/kakoune-text-objects' %{
 }
 
 # surround
+plug "alexherbo2/prelude.kak"
 plug "alexherbo2/auto-pairs.kak"
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
