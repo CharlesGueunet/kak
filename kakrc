@@ -188,9 +188,9 @@ map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next h
 map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
 
 # Select next mode
- 
+
 declare-user-mode select-next
-map global normal ',' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
+map global user '<space>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
 define-command -override -hidden select-next-param %{
     execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
 }
@@ -201,6 +201,7 @@ map global select-next ']' 'f[<a-i>]'                 -docstring "select inside 
 map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
 map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
 map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
+map global select-next 'p' ']pj<a-i>p'           -docstring "select inside next angles"
 
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
