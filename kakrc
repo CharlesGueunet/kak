@@ -33,7 +33,6 @@ set-face global Whitespace rgb:465258,default
 # ───────────
 declare-option str modeline_git_val    ''
 declare-option str modeline_git_branch ''
-declare-option str out_of_view_status_line ''
 
 hook global WinCreate .* %{
     # Done in two pass to deal with colors
@@ -149,7 +148,7 @@ define-command -params 0..1 secure_write %{ evaluate-commands %sh{
 unalias global w write
 alias global w secure_write
 
-# Git
+# Git mode
 
 define-command git-show-blamed-commit %{
   git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
@@ -174,7 +173,7 @@ define-command git-hide-diff %{
   remove-highlighter window/git-diff
 }
 declare-user-mode git
-map global user 'g' ':enter-user-mode git<ret>'    -docstring 'enter git mode' 
+map global user 'g' ': enter-user-mode git<ret>'   -docstring 'enter git mode' 
 map global git 'b' ': git-toggle-blame<ret>'       -docstring 'blame (toggle)'
 map global git 'l' ': git log<ret>'                -docstring 'log'
 map global git 'c' ': git commit<ret>'             -docstring 'commit'
@@ -187,6 +186,21 @@ map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
 # chain commands
 map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next hunk'
 map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
+
+# Select next mode
+ 
+declare-user-mode select-next
+map global normal ',' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
+define-command -override -hidden select-next-param %{
+    execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
+}
+map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
+map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
+map global select-next ')' 'f(<a-i>)'                 -docstring "select inside next parentheses"
+map global select-next ']' 'f[<a-i>]'                 -docstring "select inside next brackets"
+map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
+map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
+map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
 
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
@@ -250,7 +264,7 @@ hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
   set-option global lintcmd kak_pylint
   # set-option global lintcmd 'flake8'
-  lint-enable
+  # lint-enable
 
   declare-user-mode lint-python
   map global user 'l' ': enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
@@ -329,13 +343,8 @@ plug "alexherbo2/out-of-view.kak"
 
 ## Text
 
-# objects
-plug 'delapouite/kakoune-text-objects' %{
-  text-object-map
-}
-
 # surround
-plug "alexherbo2/prelude.kak"
+plug "alexherbo2/prelude.kak" # for auto-pairs
 plug "alexherbo2/auto-pairs.kak"
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
@@ -350,15 +359,6 @@ plug "h-youhei/kakoune-surround" %{
 plug "Screwtapello/kakoune-inc-dec" domain "gitlab.com" %{
   map global normal <c-a> ': inc-dec-modify-numbers + %val{count}<ret>'
   map global normal <c-x> ': inc-dec-modify-numbers - %val{count}<ret>'
-}
-
-# navigation
-plug "danr/kakoune-easymotion" %{
-  map global user ' ' ': enter-user-mode easymotion<ret>' -docstring 'easymotion'
-  map global easymotion 'b' ': easy-motion-b<ret>' -docstring 'word ←'
-  map global easymotion 'B' ': easy-motion-B<ret>' -docstring 'Word ←'
-  unmap global easymotion 'q'
-  unmap global easymotion 'Q'
 }
 
 # completion
@@ -383,14 +383,16 @@ plug "ul/kak-lsp" do %{
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
     }
-    # hook global WinSetOption filetype=python %{
-    #   set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
-    # }
+    hook global WinSetOption filetype=python %{
+      set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
+      lsp-enable-window
+    }
     hook global WinSetOption filetype=rust %{
         set-option window lsp_server_configuration rust.clippy_preference="on"
     }
     hook global KakEnd .* lsp-exit
 }
+
 #snippets
 plug "occivink/kakoune-snippets" config %{
     set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
