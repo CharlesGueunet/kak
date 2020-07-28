@@ -27,7 +27,7 @@ add-highlighter global/ column 80 default,rgb:171717
 add-highlighter global/ column 120 default,rgb:191919
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:80303040
-set-face global Whitespace rgb:465258,default
+set-face global Whitespace rgba:aaaaaa20,default
 
 # Status line
 # ───────────
@@ -56,7 +56,6 @@ hook global WinCreate .* %{
 # left to right
 set-option global modelinefmt ''
 set-option -add global modelinefmt '{{context_info}}'
-set-option -add global modelinefmt ' {yellow}%opt{out_of_view_status_line}{default}'
 set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
 set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
@@ -183,9 +182,9 @@ map global git 'h' ': git show-diff<ret>'          -docstring 'show diff'
 map global git 'H' ': git-hide-diff<ret>'          -docstring 'hide diff'
 map global git 'w' ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
 map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
-# chain commands
-map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'next hunk'
-map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'prev hunk'
+# move command
+map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'go to next hunk'
+map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'go to prev hunk'
 
 # Select next mode
 
@@ -201,7 +200,7 @@ map global select-next ']' 'f[<a-i>]'                 -docstring "select inside 
 map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
 map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
 map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
-map global select-next 'p' ']pj<a-i>p'           -docstring "select inside next angles"
+map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
 
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
@@ -212,8 +211,9 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 # Filetype specific
 # ─────────────────
 
-# C / CPP: CMake
-# TODO: separate plugin
+# C / CPP: CMake build system
+ 
+declare-user-mode cmake
 hook global WinSetOption filetype=(c|cpp|cmake) %{
   declare-option -docstring 'build folder' str cmake_build_folder
   declare-option -docstring 'nb core to build' int cmake_nb_cores
@@ -242,7 +242,6 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   define-command -override cmake-install -docstring "Verbose install" %{
       cmake-fifo "--build %opt{cmake_build_folder} --target install -- -j %opt{cmake_nb_cores}" "Install"
   }
-  declare-user-mode cmake
   map global user   'c' ': enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
   map global cmake  'c' ': terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
   map global cmake  'b' ': eval -draft cmake-build<ret>'       -docstring 'silent build'
@@ -261,11 +260,12 @@ hook global WinSetOption filetype=(c) %{
 }
 
 # Python
+
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
   set-option global lintcmd kak_pylint
   # set-option global lintcmd 'flake8'
-  # lint-enable
+  lint-enable
 
   declare-user-mode lint-python
   map global user 'l' ': enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
@@ -275,6 +275,7 @@ hook global WinSetOption filetype=python %{
 }
 
 # XML
+
 map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
 hook global BufCreate .vt.* %{ # VTK file types are XML
   set-option buffer filetype xml
@@ -285,7 +286,6 @@ hook global BufCreate .vt.* %{ # VTK file types are XML
 
 declare-option -hidden regex curword
 set-face global CurWord default,rgba:30303050
-# set-face global CurWord default,rgb:ffcaca # for light terminal
 
 hook global NormalIdle .* %{
   eval -draft %{
@@ -302,15 +302,12 @@ add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 # System clipboard handling
 # ─────────────────────────
 
-evaluate-commands %sh{
-    case $(uname) in
-        Linux) copy="xclip -i"; paste="xclip -o" ;;
-        Darwin)  copy="pbcopy"; paste="pbpaste" ;;
-    esac
+map global user 'P' '!xsel --output --clipboard <ret>'     -docstring 'paste from clipboard'
+map global user 'p' '<a-!>xsel --output --clipboard <ret>' -docstring 'paste from clipboard (after)'
 
-    printf "map global user -docstring 'paste from clipboard' p '!%s<ret>'\n" "$paste"
-    printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
-}
+hook global RegisterModified '"' %{ nop %sh{
+  printf %s "$kak_main_reg_dquote" | xsel --input --clipboard
+}}
 
 # Plugins
 # ───────
@@ -339,8 +336,6 @@ plug "occivink/kakoune-phantom-selection" %{
   map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>i"
   map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>i"
 }
-# count non visible selection
-plug "alexherbo2/out-of-view.kak"
 
 ## Text
 
