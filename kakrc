@@ -18,7 +18,7 @@ set-face global StatusLine default,black
 set-face global BufferPadding default,black
 
 add-highlighter global/ number-lines -hlcursor -relative
-add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf ' ' -spc ' ' -nbsp '⍽'
+add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
 add-highlighter global/ show-matching
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
@@ -27,7 +27,7 @@ add-highlighter global/ column 80 default,rgb:171717
 add-highlighter global/ column 120 default,rgb:191919
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:80303040
-set-face global Whitespace rgba:aaaaaa20,default
+set-face global Whitespace rgba:55555520,default
 
 # Status line
 # ───────────
