@@ -1,36 +1,34 @@
 # User preference
 # ───────────────
-# colorscheme solarized-light # for light terminal
-set-option global ui_options ncurses_status_on_top=true
 
+set-option global ui_options ncurses_status_on_top=true
 set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
 set-option global indentwidth 2
-set-option global makecmd 'make -j8'
 set-option global grepcmd 'ag --column'
 
 # Colors
 # ──────
-set-face global Default default,black
-set-face global LineNumbers default,black
-set-face global StatusLine default,black
-set-face global BufferPadding default,black
 
-add-highlighter global/ number-lines -hlcursor -relative
-add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
-add-highlighter global/ show-matching
-add-highlighter global/ dynregex '%reg{/}' 0:+u
-add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
-# add-highlighter global/ show-whitespaces -only-trailing
-add-highlighter global/ column 80 default,rgb:171717
-add-highlighter global/ column 120 default,rgb:191919
+set-face global Default default,black
+set-face global StatusLine default,black
+set-face global LineNumbers default,black
+set-face global BufferPadding default,black
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:80303040
 set-face global Whitespace rgba:55555520,default
 
+# add-highlighter global/ show-whitespaces -only-trailing
+add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
+add-highlighter global/ dynregex '%reg{/}' 0:+u
+add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
+add-highlighter global/ column 80 default,rgb:171717
+add-highlighter global/ column 120 default,rgb:191919
+
 # Status line
 # ───────────
+
 declare-option str modeline_git_val    ''
 declare-option str modeline_git_branch ''
 
@@ -60,6 +58,36 @@ set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' on {green}%val{bufname}{default}:{cyan}%val{cursor_line}{default}:{cyan}%val{cursor_char_column}{default}'
 set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
 
+# Number line column
+# ──────────────────
+
+add-highlighter global/ number-lines -hlcursor
+def switch-number-line -params .. %{
+    try %{ remove-highlighter window/number_lines }
+    add-highlighter window/number_lines number-lines -hlcursor %arg{@}
+}
+# press 0 to show relative
+hook global NormalKey 0 'switch-number-line -relative'
+hook global NormalKey \D.* 'switch-number-line'
+
+# Highlight the word under the cursor
+# ───────────────────────────────────
+
+declare-option -hidden regex curword
+set-face global CurWord default,rgba:30303050
+
+hook global NormalIdle .* %{
+  eval -draft %{
+    try %{
+      exec <space><a-i>w <a-k>\A\w+\z<ret>
+      set-option buffer curword "\b\Q%val{selection}\E\b"
+    } catch %{
+      set-option buffer curword ''
+    }
+  }
+}
+add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
+
 # Custom mappings
 # ───────────────
 
@@ -88,8 +116,6 @@ hook global WinSetOption filetype=(c|cpp) %{
 
 # select previous word (bash like)
 map global insert <c-w> '<a-;>h<a-;><a-B>'
-# open line above
-map global insert <c-o> '<a-;>O'
 
 declare-option -hidden int kak_opt_autowrap_column
 set-option global kak_opt_autowrap_column 80
@@ -109,6 +135,8 @@ define-command -params 1 urk %{
 map global user i %{:urk %val{count}<ret>} -docstring "countable insert"
 
 # Move mode
+# ─────────
+
 declare-user-mode quickmove
 map global user 'v' ': enter-user-mode -lock quickmove<ret>'    -docstring 'enter quickmove mode' 
 map global quickmove 'k' 'k'          -docstring 'line above'
@@ -128,26 +156,8 @@ map global quickmove ')' ']);'        -docstring 'parenthesis block below'
 map global quickmove 'n' '<esc><tab>' -docstring 'jump next position'
 map global quickmove 'p' '<esc><c-o>' -docstring 'jump previous position'
 
-# Secure save
-
-define-command -params 0..1 secure_write %{ evaluate-commands %sh{
-  if [ -z ${1+x} ]; then
-    # no param given: usual write
-    echo "write"
-  else
-    bufname=$1
-    if [ -e "${bufname}" ] && [ "${bufname}" != "${current_bufname}" ]; then
-      # file already exists and is not the current one
-      echo "echo 'Use w! to override existing file'"
-    else
-      echo "write ${bufname}"
-    fi
-  fi
-}}
-unalias global w write
-alias global w secure_write
-
 # Git mode
+# ────────
 
 define-command git-show-blamed-commit %{
   git show %sh{git blame -L "$kak_cursor_line,$kak_cursor_line" "$kak_buffile" | awk '{print $1}'}
@@ -187,6 +197,7 @@ map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'go to 
 map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'go to prev hunk'
 
 # Select next mode
+# ────────────────
 
 declare-user-mode select-next
 map global user '<space>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
@@ -281,23 +292,25 @@ hook global BufCreate .vt.* %{ # VTK file types are XML
   set-option buffer filetype xml
 }
 
-# Highlight the word under the cursor
-# ───────────────────────────────────
+# Secure save
+# ───────────
 
-declare-option -hidden regex curword
-set-face global CurWord default,rgba:30303050
-
-hook global NormalIdle .* %{
-  eval -draft %{
-    try %{
-      exec <space><a-i>w <a-k>\A\w+\z<ret>
-      set-option buffer curword "\b\Q%val{selection}\E\b"
-    } catch %{
-      set-option buffer curword ''
-    }
-  }
-}
-add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
+define-command -params 0..1 secure_write %{ evaluate-commands %sh{
+  if [ -z ${1+x} ]; then
+    # no param given: usual write
+    echo "write"
+  else
+    bufname=$1
+    if [ -e "${bufname}" ] && [ "${bufname}" != "${current_bufname}" ]; then
+      # file already exists and is not the current one
+      echo "echo 'Use w! to override existing file'"
+    else
+      echo "write ${bufname}"
+    fi
+  fi
+}}
+unalias global w write
+alias global w secure_write
 
 # System clipboard handling
 # ─────────────────────────
