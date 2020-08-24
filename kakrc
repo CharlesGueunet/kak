@@ -62,13 +62,13 @@ set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline
 # ──────────────────
 
 add-highlighter global/ number-lines -hlcursor
-def switch-number-line -params .. %{
-    try %{ remove-highlighter window/number_lines }
-    add-highlighter window/number_lines number-lines -hlcursor %arg{@}
-}
-# press 0 to show relative
-hook global NormalKey 0 'switch-number-line -relative'
-hook global NormalKey \D.* 'switch-number-line'
+# def switch-number-line -params .. %{
+#     try %{ remove-highlighter window/number_lines }
+#     add-highlighter window/number_lines number-lines -hlcursor %arg{@}
+# }
+# # press 0 to show relative
+# hook global NormalKey 0 'switch-number-line -relative'
+# hook global NormalKey \D.* 'switch-number-line'
 
 # Highlight the word under the cursor
 # ───────────────────────────────────
@@ -145,6 +145,7 @@ map global quickmove 'h' 'h'          -docstring 'left char'
 map global quickmove 'l' 'l'          -docstring 'right char'
 map global quickmove 'K' '[p;'        -docstring 'paragraph above'
 map global quickmove 'J' ']p;'        -docstring 'paragraph below'
+map global quickmove '<ret>' ']p;'    -docstring 'paragraph below'
 map global quickmove 'H' 'I<esc>'     -docstring 'line begining'
 map global quickmove 'L' '<a-l>;'     -docstring 'line end'
 map global quickmove 'I' '[i;I<esc>'  -docstring 'indent level above'
@@ -260,6 +261,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake  'i' ': eval -draft cmake-install<ret>'     -docstring 'silent install'
   map global cmake  'I' ': cmake-install<ret>'                 -docstring 'verbose install'
   map global cmake  's' ': buffer *CMake*<ret>'                -docstring 'show CMake buffer'
+  map global cmake  'd' ': delete-buffer *CMake*<ret>'         -docstring 'delete CMake buffer'
   map global cmake  'p' ': cmake-set-nb_cores '                -docstring 'set number of cores to use'
 }
 
@@ -402,7 +404,7 @@ plug "ul/kak-lsp" do %{
     hook global KakEnd .* lsp-exit
 }
 
-#snippets
+# snippets
 plug "occivink/kakoune-snippets" config %{
     set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
     set-option global snippets_auto_expand false
@@ -414,3 +416,4 @@ plug "occivink/kakoune-snippets" config %{
     map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
+
