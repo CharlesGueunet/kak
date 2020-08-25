@@ -99,6 +99,13 @@ map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
 map global normal <a-tab> '<a-:>'
 
+# Current indented paragraph
+define-command -hidden custom-indented-paragraph %{
+  execute-keys -draft -save-regs '' '<a-i>pZ'
+  execute-keys '<alt-i>i<a-z>i'
+}
+map -docstring 'Indented paragraph' global object I '<esc>: custom-indented-paragraph<ret>'
+
 hook global InsertChar '[jj]' %{
   try %{
     execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
