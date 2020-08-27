@@ -207,19 +207,19 @@ map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'go to 
 # Select next mode
 # ────────────────
 
-declare-user-mode select-next
-map global user '<space>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
-define-command -override -hidden select-next-param %{
-    execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
-}
-map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
-map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
-map global select-next ')' 'f(<a-i>)'                 -docstring "select inside next parentheses"
-map global select-next ']' 'f[<a-i>]'                 -docstring "select inside next brackets"
-map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
-map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
-map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
-map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
+# declare-user-mode select-next
+# map global user '<space>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
+# define-command -override -hidden select-next-param %{
+#     execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
+# }
+# map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
+# map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
+# map global select-next ')' 'f(<a-i>)'                 -docstring "select inside next parentheses"
+# map global select-next ']' 'f[<a-i>]'                 -docstring "select inside next brackets"
+# map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
+# map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
+# map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
+# map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
 
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
@@ -344,6 +344,9 @@ plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
+plug "andreyorst/fzf.kak" %{
+  map global normal <c-p> ': fzf-mode<ret>'
+}
 
 ## Selection
 
@@ -371,6 +374,15 @@ plug "h-youhei/kakoune-surround" %{
   map global surround c ': change-surround<ret>'        -docstring 'change'
   map global surround d ': delete-surround<ret>'        -docstring 'delete'
   map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
+}
+plug "danr/kakoune-easymotion" %{
+  map global user <space> ': enter-user-mode easymotion<ret>' -docstring 'easymotion'
+  map global easymotion 'b' ': easy-motion-b<ret>' -docstring 'word ←'
+  map global easymotion 'B' ': easy-motion-B<ret>' -docstring 'Word ←'
+  unmap global easymotion 'q'
+  unmap global easymotion 'Q'
+
+  set-face global EasyMotionForeground black,red
 }
 
 # digits vim like
