@@ -6,7 +6,6 @@ set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
 set-option global indentwidth 2
-set-option global grepcmd 'ag --column'
 
 # Colors
 # ──────
@@ -62,13 +61,6 @@ set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline
 # ──────────────────
 
 add-highlighter global/ number-lines -hlcursor
-# def switch-number-line -params .. %{
-#     try %{ remove-highlighter window/number_lines }
-#     add-highlighter window/number_lines number-lines -hlcursor %arg{@}
-# }
-# # press 0 to show relative
-# hook global NormalKey 0 'switch-number-line -relative'
-# hook global NormalKey \D.* 'switch-number-line'
 
 # Highlight the word under the cursor
 # ───────────────────────────────────
@@ -99,19 +91,36 @@ map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
 map global normal <a-tab> '<a-:>'
 
-# Current indented paragraph
+# Current indented paragraph object
 define-command -hidden custom-indented-paragraph %{
   execute-keys -draft -save-regs '' '<a-i>pZ'
   execute-keys '<alt-i>i<a-z>i'
 }
 map -docstring 'Indented paragraph' global object I '<esc>: custom-indented-paragraph<ret>'
 
+# x extend selection below, X above
+def -params 1 extend-line-down %{
+  exec "<a-:>%arg{1}X"
+}
+def -params 1 extend-line-up %{
+  exec "<a-:><a-;>%arg{1}K<a-;>"
+  try %{
+    exec -draft ';<a-K>\n<ret>'
+    exec X
+  }
+  exec '<a-;><a-X>'
+}
+map global normal x ':extend-line-down %val{count}<ret>'
+map global normal X ':extend-line-up %val{count}<ret>'
+
+# esc with jj
 hook global InsertChar '[jj]' %{
   try %{
     execute-keys -draft "hH<a-k>%val{hook_param}%val{hook_param}<ret>d"
     execute-keys <esc>
   }
 }
+# cpp: ,, -> <<
 hook global WinSetOption filetype=(c|cpp) %{
   hook buffer InsertChar '[,,]' %{
     try %{
@@ -382,7 +391,7 @@ plug "danr/kakoune-easymotion" %{
   unmap global easymotion 'q'
   unmap global easymotion 'Q'
 
-  set-face global EasyMotionForeground black,red
+  set-face global EasyMotionForeground rgb:000000,rgb:ff0000
 }
 
 # digits vim like
