@@ -94,7 +94,7 @@ map global normal <a-tab> '<a-:>'
 # Current indented paragraph object
 define-command -hidden custom-indented-paragraph %{
   execute-keys -draft -save-regs '' '<a-i>pZ'
-  execute-keys '<alt-i>i<a-z>i'
+  execute-keys '<a-i>i<a-z>i'
 }
 map -docstring 'Indented paragraph' global object I '<esc>: custom-indented-paragraph<ret>'
 
