@@ -91,6 +91,16 @@ map global normal <backspace> ';'
 map global normal <tab> '<a-;>'
 map global normal <a-tab> '<a-:>'
 
+# invert q & b
+
+map global normal q b
+map global normal Q B
+map global normal <a-q> <a-b>
+map global normal <a-Q> <a-B>
+
+map global normal b q
+map global normal B Q
+
 # Current indented paragraph object
 define-command -hidden custom-indented-paragraph %{
   execute-keys -draft -save-regs '' '<a-i>pZ'
@@ -205,7 +215,7 @@ map global git 'l' ': git log<ret>'                -docstring 'log'
 map global git 'c' ': git commit<ret>'             -docstring 'commit'
 map global git 'd' ': git diff<ret>'               -docstring 'diff'
 map global git 's' ': git status<ret>'             -docstring 'status'
-map global git 't' ': repl tig<ret>'               -docstring 'tig'
+map global git 't' ': repl-new tig<ret>'           -docstring 'tig'
 map global git 'h' ': git show-diff<ret>'          -docstring 'show diff'
 map global git 'H' ': git-hide-diff<ret>'          -docstring 'hide diff'
 map global git 'w' ': git-show-blamed-commit<ret>' -docstring 'show blamed commit'
@@ -213,6 +223,23 @@ map global git 'L' ': git-log-lines<ret>'          -docstring 'log blame'
 # move command
 map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'go to next hunk'
 map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'go to prev hunk'
+
+# always show the git indicator, update on save
+# # enable flag-lines hl for git diff
+# hook global WinCreate .* %{
+#     add-highlighter window/git-diff flag-lines Default git_diff_flags
+# }
+# # trigger update diff if inside git dir
+# hook global BufOpenFile .* %{
+#     evaluate-commands -draft %sh{
+#         cd $(dirname "$kak_buffile")
+#         if [ $(git rev-parse --git-dir 2>/dev/null) ]; then
+#             for hook in WinCreate BufReload BufWritePost; do
+#                 printf "hook buffer -group git-update-diff %s .* 'git update-diff'\n" "$hook"
+#             done
+#         fi
+#     }
+# }
 
 # Select next mode
 # ────────────────
@@ -375,8 +402,20 @@ plug "occivink/kakoune-phantom-selection" %{
 ## Text
 
 # surround
-plug "alexherbo2/prelude.kak" # for auto-pairs
-plug "alexherbo2/auto-pairs.kak"
+plug "alexherbo2/prelude.kak"
+plug "alexherbo2/auto-pairs.kak" %{
+  require-module prelude
+  require-module auto-pairs
+  auto-pairs-enable
+}
+plug "alexherbo2/word-select.kak" %{
+  require-module prelude
+  require-module word-select
+  map global normal w ': word-select-next-word<ret>'
+  map global normal <a-w> ': word-select-next-big-word<ret>'
+  map global normal q ': word-select-previous-word<ret>'
+  map global normal <a-q> ': word-select-previous-big-word<ret>'
+}
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
   map global normal '<c-s>' ': enter-user-mode surround<ret>'
