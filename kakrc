@@ -66,17 +66,27 @@ add-highlighter global/ number-lines -hlcursor
 # ───────────────────────────────────
 
 declare-option -hidden regex curword
-set-face global CurWord default,rgba:30303050
+set-face global CurWord default,rgba:40404050
 
-hook global NormalIdle .* %{
+define-command -hidden custom-highlight-word-cursor %{
   eval -draft %{
     try %{
       exec <space><a-i>w <a-k>\A\w+\z<ret>
       set-option buffer curword "\b\Q%val{selection}\E\b"
     } catch %{
-      set-option buffer curword ''
     }
   }
+}
+define-command -hidden custom-highlight-word %{ %sh{
+  if [ "${kak_selections_length}" = "1" ]; then
+    echo "custom-highlight-word-cursor"
+  else
+    echo "nop"
+  fi
+}}
+hook global RawKey .* %{
+  set-option buffer curword ''
+  custom-highlight-word
 }
 add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 
@@ -120,8 +130,8 @@ def -params 1 extend-line-up %{
   }
   exec '<a-;><a-X>'
 }
-map global normal x ':extend-line-down %val{count}<ret>'
-map global normal X ':extend-line-up %val{count}<ret>'
+map global normal x ': extend-line-down %val{count}<ret>'
+map global normal X ': extend-line-up %val{count}<ret>'
 
 # esc with jj
 hook global InsertChar '[jj]' %{
