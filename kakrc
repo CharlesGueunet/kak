@@ -235,38 +235,38 @@ map global git 'n' ': git show-diff<ret>: git next-hunk<ret>' -docstring 'go to 
 map global git 'p' ': git show-diff<ret>: git prev-hunk<ret>' -docstring 'go to prev hunk'
 
 # always show the git indicator, update on save
-# # enable flag-lines hl for git diff
-# hook global WinCreate .* %{
-#     add-highlighter window/git-diff flag-lines Default git_diff_flags
-# }
-# # trigger update diff if inside git dir
-# hook global BufOpenFile .* %{
-#     evaluate-commands -draft %sh{
-#         cd $(dirname "$kak_buffile")
-#         if [ $(git rev-parse --git-dir 2>/dev/null) ]; then
-#             for hook in WinCreate BufReload BufWritePost; do
-#                 printf "hook buffer -group git-update-diff %s .* 'git update-diff'\n" "$hook"
-#             done
-#         fi
-#     }
-# }
+# enable flag-lines hl for git diff
+hook global WinCreate .* %{
+    add-highlighter window/git-diff flag-lines Default git_diff_flags
+}
+# trigger update diff if inside git dir
+hook global BufOpenFile .* %{
+    evaluate-commands -draft %sh{
+        cd $(dirname "$kak_buffile")
+        if [ $(git rev-parse --git-dir 2>/dev/null) ]; then
+            for hook in WinCreate BufReload BufWritePost; do
+                printf "hook buffer -group git-update-diff %s .* 'git update-diff'\n" "$hook"
+            done
+        fi
+    }
+}
 
 # Select next mode
 # ────────────────
 
-# declare-user-mode select-next
-# map global user '<space>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
-# define-command -override -hidden select-next-param %{
-#     execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
-# }
-# map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
-# map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
-# map global select-next ')' 'f(<a-i>)'                 -docstring "select inside next parentheses"
-# map global select-next ']' 'f[<a-i>]'                 -docstring "select inside next brackets"
-# map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
-# map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
-# map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
-# map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
+declare-user-mode select-next
+map global user '<tab>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
+define-command -override -hidden select-next-param %{
+    execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
+}
+map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
+map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
+map global select-next ')' 'f(<a-i>)'                 -docstring "select inside next parentheses"
+map global select-next ']' 'f[<a-i>]'                 -docstring "select inside next brackets"
+map global select-next '}' 'f{<a-i>}'                 -docstring "select inside next braces"
+map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside next angles"
+map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
+map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
 
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
