@@ -436,10 +436,6 @@ plug "h-youhei/kakoune-surround" %{
 }
 plug "danr/kakoune-easymotion" %{
   map global user <space> ': enter-user-mode easymotion<ret>' -docstring 'easymotion'
-  map global easymotion 'b' ': easy-motion-b<ret>' -docstring 'word ←'
-  map global easymotion 'B' ': easy-motion-B<ret>' -docstring 'Word ←'
-  unmap global easymotion 'q'
-  unmap global easymotion 'Q'
 
   set-face global EasyMotionForeground rgb:000000,rgb:ff0000
 }
