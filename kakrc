@@ -6,6 +6,7 @@ set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
 set-option global indentwidth 2
+set-option global grepcmd 'ag --hidden --ignore .ccls-cache'
 
 # Colors
 # ──────
@@ -17,6 +18,7 @@ set-face global BufferPadding default,black
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:80303040
 set-face global Whitespace rgba:55555520,default
+set-face global Trailling default,rgba:55555520
 
 # add-highlighter global/ show-whitespaces -only-trailing
 add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
@@ -24,6 +26,7 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 add-highlighter global/ column 80 default,rgb:171717
 add-highlighter global/ column 120 default,rgb:191919
+add-highlighter global/show-trailing-whitespaces regex '\h+$' 0:Trailling
 
 # Status line
 # ───────────
