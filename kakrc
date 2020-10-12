@@ -333,15 +333,14 @@ hook global WinSetOption filetype=(c) %{
 
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
-  set-option global lintcmd kak_pylint
-  # set-option global lintcmd 'flake8'
-  lint-enable
+  # set-option global lintcmd kak_pylint
+  set-option global lintcmd 'flake8'
 
   declare-user-mode lint-python
   map global user 'l' ': enter-user-mode lint-python<ret>' -docstring 'enter lint mode'
   map global lint-python 'l' ': lint<ret>'                 -docstring 'update lint'
-  map global lint-python 'n' ': lint-next-error<ret>'      -docstring 'next error'
-  map global lint-python 'p' ': lint-previous-error<ret>'  -docstring 'previous error'
+  map global lint-python 'n' ': lint-next-message<ret>'      -docstring 'next error'
+  map global lint-python 'p' ': lint-previous-message<ret>'  -docstring 'previous error'
 }
 
 # XML
@@ -472,8 +471,7 @@ plug "ul/kak-lsp" do %{
         set-face window DiagnosticWarning default+u
     }
     hook global WinSetOption filetype=python %{
-      set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
-      lsp-enable-window
+        lsp-enable-window
     }
     hook global WinSetOption filetype=rust %{
         set-option window lsp_server_configuration rust.clippy_preference="on"
