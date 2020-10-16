@@ -410,16 +410,32 @@ hook global RegisterModified '"' %{ nop %sh{
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
 
+## Tools
+plug "alexherbo2/prelude.kak"
+
 ## Buffers
 
 plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
-plug "andreyorst/fzf.kak" %{
-  map global normal <c-p> ': fzf-mode<ret>'
-}
+plug "alexherbo2/connect.kak" config %{
+  require-module prelude
+  require-module connect
+  require-module connect-fzf
 
+  alias global explore-files fzf-files
+  alias global explore-buffers fzf-buffers
+
+  declare-user-mode fuzzy
+  map -docstring "Fuzzy finder commands" global normal <c-p> %{:enter-user-mode fuzzy<ret>}
+  map global fuzzy -docstring "buffers - Select an open buffer" b ': fzf-buffers<ret>'
+  map global fuzzy -docstring "files - Select files in project" f ': fzf-files<ret>'
+
+  # Create a new window
+  map global normal <c-t> ': connect-terminal<ret>'
+  map global normal <c-n> ': connect-shell kitty<ret>'
+}
 ## Selection
 
 # one by one manip
@@ -437,7 +453,6 @@ plug "occivink/kakoune-phantom-selection" %{
 ## Text
 
 # surround
-plug "alexherbo2/prelude.kak"
 plug "alexherbo2/auto-pairs.kak" %{
   require-module prelude
   require-module auto-pairs
