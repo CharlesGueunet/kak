@@ -96,13 +96,12 @@ add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
 # Custom mappings
 # ───────────────
 
-map global normal , <space>
-map global normal <space> ,
+map global normal , <space> # leader is space
+map global normal <space> , # back to one selection
 map global normal \' \"
 map global normal <ret> :
-map global normal <backspace> ';'
-map global normal <tab> '<a-;>'
-map global normal <a-tab> '<a-:>'
+map global normal <tab> '<a-;>'   # switch side
+map global normal <%> '<c-s>%' # Save position before %
 
 # invert q & b
 
