@@ -433,7 +433,7 @@ plug "alexherbo2/connect.kak" config %{
 
   # Create a new window
   map global normal <c-t> ': connect-terminal<ret>'
-  map global normal <c-n> ': connect-shell kitty<ret>'
+  map global normal <c-k> ': connect-shell kitty<ret>'
 }
 ## Selection
 
@@ -507,7 +507,7 @@ plug "ul/kak-lsp" do %{
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
     }
-  hook global WinSetOption filetype=python %{
+    hook global WinSetOption filetype=python %{
         lsp-enable-window
     }
     hook global WinSetOption filetype=rust %{
