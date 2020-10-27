@@ -402,6 +402,11 @@ hook global RegisterModified '"' %{ nop %sh{
   printf %s "$kak_main_reg_dquote" | xsel --input --clipboard
 }}
 
+# Custom commands
+# ───────────────
+
+define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
+
 # Plugins
 # ───────
 
