@@ -6,7 +6,7 @@ set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
 set-option global indentwidth 2
-set-option global grepcmd 'ag --hidden --ignore .ccls-cache'
+set-option global grepcmd 'ag --hidden --ignore .ccls-cache --ignore build*'
 
 # Colors
 # ──────
@@ -427,6 +427,12 @@ plug "alexherbo2/connect.kak" config %{
   require-module prelude
   require-module connect
   require-module connect-fzf
+
+  set-option global connect_environment %{
+    export SHELL=zsh
+    export FZF_DEFAULT_OPTS='--height 40% --border --preview "less -$LINES {}"'
+    export FZF_DEFAULT_COMMAND='ag --hidden --ignore-dir={.git,.ccls-cache,build,buildR,buildD} -g ""'
+  }
 
   alias global explore-files fzf-files
   alias global explore-buffers fzf-buffers
