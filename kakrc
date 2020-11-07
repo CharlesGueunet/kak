@@ -172,6 +172,16 @@ map global user i %{:urk %val{count}<ret>} -docstring "countable insert"
 # Move mode
 # ─────────
 
+define-command go-to-inner-ident %{
+  try  %{
+    execute-keys %sh{
+      # get the current indent level
+      printf "/^"
+      printf "%s" "${kak_selection}" | head -1 | grep -Po '^\s+' | tr -d '\n'
+      printf "\s<ret>)<space>w;"
+    }
+  }
+}
 declare-user-mode quickmove
 map global user '<space>' ': enter-user-mode -lock quickmove<ret>'    -docstring 'enter quickmove mode' 
 map global quickmove 'k' 'k'          -docstring 'line above'
@@ -192,7 +202,8 @@ map global quickmove ')' 'f);'        -docstring 'parenthesis block below'
 map global quickmove 'n' '<esc><tab>' -docstring 'jump next position'
 map global quickmove 'p' '<esc><c-o>' -docstring 'jump previous position'
 # TODO: < > one indent level above / under
-map global quickmove '<' '[i;kI<esc>' -docstring 'jump previous position'
+map global quickmove '<' '[i;kI<esc>'                     -docstring 'previous indent level'
+map global quickmove '>' 'x: go-to-inner-ident<ret>' -docstring 'next indent level'
 
 # Git mode
 # ────────
