@@ -190,6 +190,8 @@ map global quickmove 'h' 'h'          -docstring 'left char'
 map global quickmove 'l' 'l'          -docstring 'right char'
 map global quickmove 'K' '[pk; '      -docstring 'paragraph above'
 map global quickmove 'J' ']p;'        -docstring 'paragraph below'
+map global quickmove '<a-k>' '10k'    -docstring '10 lines above'
+map global quickmove '<a-j>' '10j'    -docstring '10 lines below'
 map global quickmove '<ret>' ']p;'    -docstring 'paragraph below'
 map global quickmove 'H' 'I<esc>'     -docstring 'line begining'
 map global quickmove 'L' '<a-l>;'     -docstring 'line end'
@@ -280,6 +282,10 @@ map global select-next '>' 'f<lt><a-i><gt>'           -docstring "select inside 
 map global select-next 'u' ': select-next-param<ret>' -docstring "select next argument"
 map global select-next 'p' ']pj<a-i>p'                -docstring "select inside next angles"
 
+# Search mode
+# ───────────
+map global user '/' '/(?i)' -docstring "case insensitive search"
+
 # Enable <tab>/<s-tab> for insert completion selection
 # ──────────────────────────────────────────────────────
 
@@ -312,7 +318,7 @@ hook global WinSetOption filetype=(c|cpp) %{
 }
 
 # build system
-declare-user-mode cmake
+                declare-user-mode cmake
 hook global WinSetOption filetype=(c|cpp|cmake) %{
   declare-option -docstring 'build folder' str cmake_build_folder
   declare-option -docstring 'nb core to build' int cmake_nb_cores
