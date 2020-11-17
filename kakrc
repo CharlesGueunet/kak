@@ -18,8 +18,8 @@ set-face global Trailling default,rgba:55555520
 add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
-add-highlighter global/ column 80 default,rgb:171717
-add-highlighter global/ column 120 default,rgb:191919
+add-highlighter global/ column 80 default,rgba:25252520
+add-highlighter global/ column 120 default,rgba:20202020
 add-highlighter global/show-trailing-whitespaces regex '\h+$' 0:Trailling
 
 # Status line
@@ -63,7 +63,7 @@ add-highlighter global/ number-lines -hlcursor
 # ───────────────────────────────────
 
 declare-option -hidden regex curword
-set-face global CurWord default,rgba:40404050
+set-face global CurWord default,rgba:30303018
 
 define-command -hidden custom-highlight-word-cursor %{
   eval -draft %{
