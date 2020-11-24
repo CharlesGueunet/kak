@@ -26,13 +26,13 @@ add-highlighter global/show-trailing-whitespaces regex '\h+$' 0:Trailling
 # ───────────
 
 # buffers
-declare-option str modeline_buf_nb    ''
-hook global WinCreate .* %{
-    hook window NormalIdle .* %{ evaluate-commands %sh{
-      buf_nb=$(echo "${kak_buflist}" | wc -w)
-      printf 'set window modeline_buf_nb %%{%s}' "${buf_nb}"
-    } }
-}
+# declare-option str modeline_buf_nb    ''
+# hook global WinCreate .* %{
+#     hook window NormalIdle .* %{ evaluate-commands %sh{
+#       buf_nb=$(echo "${kak_buflist}" | wc -w)
+#       printf 'set window modeline_buf_nb %%{%s}' "${buf_nb}"
+#     } }
+# }
 
 # git branch
 declare-option str modeline_git_val    ''
@@ -62,7 +62,7 @@ set-option global modelinefmt ''
 set-option -add global modelinefmt '{{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' on {green}%val{bufname}{default}'
-set-option -add global modelinefmt ' {white}(%opt{modeline_buf_nb}){default}'
+# set-option -add global modelinefmt ' {white}(%opt{modeline_buf_nb}){default}'
 set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
 
 # Number line column
@@ -355,9 +355,9 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global user   'c' ': enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
   map global cmake  'c' ': terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
   map global cmake  'b' ': eval -draft cmake-build<ret>'       -docstring 'silent build'
-  map global cmake  'B' ': cmake-build<ret>'                   -docstring 'verbose build'
+  # map global cmake  'B' ': cmake-build<ret>'                   -docstring 'verbose build'
   map global cmake  'i' ': eval -draft cmake-install<ret>'     -docstring 'silent install'
-  map global cmake  'I' ': cmake-install<ret>'                 -docstring 'verbose install'
+  # map global cmake  'I' ': cmake-install<ret>'                 -docstring 'verbose install'
   map global cmake  's' ': buffer *CMake*<ret>'                -docstring 'show CMake buffer'
   map global cmake  'd' ': delete-buffer *CMake*<ret>'         -docstring 'delete CMake buffer'
   map global cmake  'p' ': cmake-set-nb_cores '                -docstring 'set number of cores to use'
@@ -487,6 +487,10 @@ plug "alexherbo2/connect.kak" config %{
   # Create a new window
   map global normal <c-t> ': connect-terminal<ret>'
   map global normal <c-k> ': connect-shell kitty<ret>'
+
+  # build replace cmake default
+  map global cmake  'B' ': > cmake --build build -- -j 9<ret>'                   -docstring 'verbose build'
+  map global cmake  'I' ': > cmake --build build --target install -- -j 9<ret>'  -docstring 'verbose build'
 }
 ## Selection
 
