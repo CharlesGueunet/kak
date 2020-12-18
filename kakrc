@@ -487,6 +487,7 @@ plug "alexherbo2/connect.kak" config %{
   # Create a new window
   map global normal <c-t> ': connect-terminal<ret>'
   map global normal <c-k> ': connect-shell kitty<ret>'
+  map global normal <c-r> ': new<ret>'
 
   # build replace cmake default
   map global cmake  'B' ': > cmake --build build -- -j 9<ret>'                   -docstring 'verbose build'
@@ -529,12 +530,6 @@ plug "h-youhei/kakoune-surround" %{
   map global surround c ': change-surround<ret>'        -docstring 'change'
   map global surround d ': delete-surround<ret>'        -docstring 'delete'
   map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
-}
-
-# digits vim like
-plug "Screwtapello/kakoune-inc-dec" domain "gitlab.com" %{
-  map global normal <c-a> ': inc-dec-modify-numbers + %val{count}<ret>'
-  map global normal <c-x> ': inc-dec-modify-numbers - %val{count}<ret>'
 }
 
 # completion
