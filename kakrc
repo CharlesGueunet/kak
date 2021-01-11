@@ -260,15 +260,35 @@ hook global WinCreate .* %{
 }
 # trigger update diff if inside git dir
 hook global BufOpenFile .* %{
-    evaluate-commands -draft %sh{
-        cd $(dirname "$kak_buffile")
-        if [ $(git rev-parse --git-dir 2>/dev/null) ]; then
-            for hook in WinCreate BufReload BufWritePost; do
-                printf "hook buffer -group git-update-diff %s .* 'git update-diff'\n" "$hook"
-            done
-        fi
-    }
+  evaluate-commands -draft %sh{
+    cd $(dirname "$kak_buffile")
+    if [ $(git rev-parse --git-dir 2>/dev/null) ]; then
+      for hook in WinCreate BufReload BufWritePost; do
+        printf "hook buffer -group git-update-diff %s .* 'git update-diff'\n" "$hook"
+      done
+    fi
+  }
 }
+
+# Git conflict
+# ────────────
+
+map global object m %{c^[<lt>=]{4\,}[^\n]*\n,^[<gt>=]{4\,}[^\n]*\n<ret>} -docstring 'conflict markers'
+define-command conflict-use-1 %{
+  evaluate-commands -draft %{
+    execute-keys <a-h>h/^<lt>{4}<ret><a-x>d
+    execute-keys h/^={4}<ret>j
+    execute-keys -with-maps <a-a>m
+    execute-keys d
+  }
+} -docstring "resolve a conflict by using the first version"
+define-command conflict-use-2 %{
+  evaluate-commands -draft %{
+    execute-keys j
+    execute-keys -with-maps <a-a>m
+    execute-keys dh/^>{4}<ret><a-x>d
+  }
+} -docstring "resolve a conflict by using the second version"
 
 # Select next mode
 # ────────────────
@@ -276,7 +296,7 @@ hook global BufOpenFile .* %{
 declare-user-mode select-next
 map global user '<tab>' ': enter-user-mode select-next<ret>' -docstring 'enter select-next mode'
 define-command -override -hidden select-next-param %{
-    execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
+  execute-keys -save-regs '/' '/[(,]<ret>l<a-i>u'
 }
 map global select-next "'" "f'<a-i>'"                 -docstring "select inside next single quotes"
 map global select-next '"' 'f"<a-i>"'                 -docstring "select inside next double quotes"
@@ -323,16 +343,16 @@ hook global WinSetOption filetype=(c|cpp) %{
 }
 
 # build system
-                declare-user-mode cmake
+declare-user-mode cmake
 hook global WinSetOption filetype=(c|cpp|cmake) %{
   declare-option -docstring 'build folder' str cmake_build_folder
-  declare-option -docstring 'nb core to build' int cmake_nb_cores
+  declare-option -docstring 'build in parallel' str cmake_parallel_command
 
   set-option buffer cmake_build_folder "build"
-  set-option global cmake_nb_cores 6
+  set-option global cmake_parallel_command " "
 
   define-command -override cmake-set-nb_cores -params 1 %{
-      set-option global cmake_nb_cores %arg{1}
+      set-option global cmake_parallel_command " -- -j %arg{1}"
   }
   define-command -override -hidden -params 2 cmake-fifo %{ evaluate-commands %sh{
       cmake_opt=$1
@@ -347,10 +367,10 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
     }
   }
   define-command -override cmake-build -docstring "Verbose build" %{
-      cmake-fifo "--build %opt{cmake_build_folder} -- -j %opt{cmake_nb_cores}" "Build"
+      cmake-fifo "--build %opt{cmake_build_folder} %opt{cmake_parallel_command}" "Build"
   }
   define-command -override cmake-install -docstring "Verbose install" %{
-      cmake-fifo "--build %opt{cmake_build_folder} --target install -- -j %opt{cmake_nb_cores}" "Install"
+      cmake-fifo "--build %opt{cmake_build_folder} --target install %opt{cmake_parallel_command}" "Install"
   }
   map global user   'c' ': enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
   map global cmake  'c' ': terminal ccmake -S . -B build<ret>' -docstring 'configure CMake'
@@ -412,6 +432,13 @@ hook global WinSetOption filetype=(asciidoc|fountain|markdown|plain) %{
 map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
 hook global BufCreate .vt.* %{ # VTK file types are XML
   set-option buffer filetype xml
+}
+
+# Split current
+# ─────────────
+
+define-command split %{
+  new eval buffer %val{bufname} ';'
 }
 
 # Secure save
@@ -487,7 +514,7 @@ plug "alexherbo2/connect.kak" config %{
   # Create a new window
   map global normal <c-t> ': connect-terminal<ret>'
   map global normal <c-k> ': connect-shell kitty<ret>'
-  map global normal <c-r> ': new<ret>'
+  map global normal <c-r> ': split<ret>'
 
   # build replace cmake default
   map global cmake  'B' ': > cmake --build build -- -j 9<ret>'                   -docstring 'verbose build'
