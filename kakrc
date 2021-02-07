@@ -390,6 +390,10 @@ hook global WinSetOption filetype=(c) %{
   map global user -docstring 'alternate header/source' 'a' ':c-alternative-file<ret>'
 }
 
+hook global BufCreate .*\.ctest %{ # ctest is a cmake tool
+  set-option buffer filetype cmake
+}
+
 # Python
 
 hook global WinSetOption filetype=python %{
@@ -430,7 +434,7 @@ hook global WinSetOption filetype=(asciidoc|fountain|markdown|plain) %{
 # XML
 
 map -docstring 'XML tag objet' global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
-hook global BufCreate .vt.* %{ # VTK file types are XML
+hook global BufCreate .*\.vt.* %{ # VTK file types are XML
   set-option buffer filetype xml
 }
 
@@ -602,4 +606,3 @@ plug "occivink/kakoune-snippets" config %{
     map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
-
