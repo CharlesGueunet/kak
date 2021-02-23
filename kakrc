@@ -69,6 +69,7 @@ set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline
 # ──────────────────
 
 add-highlighter global/ number-lines -hlcursor
+add-highlighter global/ wrap -word -indent -marker ↳
 
 # Highlight the word under the cursor
 # ───────────────────────────────────
