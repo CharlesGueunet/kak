@@ -175,6 +175,13 @@ define-command -params 1 urk %{
 }
 map global user i %{:urk %val{count}<ret>} -docstring "countable insert"
 
+# restore last selection
+hook -group backup-selections global NormalIdle .* %{
+  set-register b %reg{z}
+  execute-keys -draft '"zZ'
+}
+map -docstring 'Restore selections from the [b]ackup register' global user z '"bz'
+
 # Move mode
 # ─────────
 
@@ -535,8 +542,9 @@ plug "occivink/kakoune-phantom-selection" %{
   map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
   map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
   map global selection <a-F> ": phantom-selection-iterate-prev<ret>"                        -docstring 'prev selection'
-  map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>i"
-  map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>i"
+  map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>a"
+  map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>a"
+  set-face global PhantomSelection default,rgb:408040
 }
 
 ## Text
