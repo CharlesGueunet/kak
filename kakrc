@@ -504,9 +504,9 @@ plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
-plug "alexherbo2/connect.kak" config %{
-  require-module prelude
-  require-module connect
+plug "alexherbo2/connect.kak" do %{
+  make install
+} config %{
   require-module connect-fzf
 
   set-option global connect_environment %{
