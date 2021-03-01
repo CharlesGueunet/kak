@@ -550,12 +550,12 @@ plug "occivink/kakoune-phantom-selection" %{
 ## Text
 
 # surround
-plug "alexherbo2/auto-pairs.kak" %{
+plug "CharlesGueunet/auto-pairs.kak" %{
   require-module prelude
   require-module auto-pairs
   auto-pairs-enable
 }
-plug "alexherbo2/word-select.kak" %{
+plug "CharlesGueunet/word-select.kak" %{
   require-module prelude
   require-module word-select
   map global normal w ': word-select-next-word<ret>'
