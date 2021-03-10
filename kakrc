@@ -453,6 +453,7 @@ hook global BufCreate .*\.vt.* %{ # VTK file types are XML
 define-command split %{
   new eval buffer %val{bufname} ';'
 }
+map global normal <c-r> ": split<ret>"
 
 # Secure save
 # ───────────
@@ -489,6 +490,18 @@ hook global RegisterModified '"' %{ nop %sh{
 
 define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
 
+# Tools
+# ─────
+
+evaluate-commands %sh{
+  kcr init kakoune
+}
+map global normal <c-t> ": connect-terminal<ret>"
+declare-user-mode fuzzy
+map global normal <c-p> %{:enter-user-mode fuzzy<ret>} -docstring "fzf commands"
+map global fuzzy b ": > kcr-fzf-buffers<ret>"          -docstring "buffers"
+map global fuzzy f ": > kcr-fzf-files<ret>"            -docstring "files"
+
 # Plugins
 # ───────
 
@@ -496,48 +509,13 @@ define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ ed
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
 
-## Tools
-plug "alexherbo2/prelude.kak"
-
 ## Buffers
 
 plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
-plug "alexherbo2/connect.kak" do %{
-  make install
-} config %{
-  require-module prelude
-  require-module connect-fzf
 
-  set-option global connect_environment %{
-    export SHELL=zsh
-    export FZF_DEFAULT_OPTS='--height 40% --border --preview "less -$LINES {}"'
-    export FZF_DEFAULT_COMMAND='ag --hidden --ignore-dir={.git,.ccls-cache,build,buildR,buildD} -g ""'
-  }
-
-  alias global explore-files fzf-files
-  alias global explore-buffers fzf-buffers
-
-  hook global KakBegin .* %{
-    alias global popup tmux-repl-window
-  }
-
-  declare-user-mode fuzzy
-  map -docstring "Fuzzy finder commands" global normal <c-p> %{:enter-user-mode fuzzy<ret>}
-  map global fuzzy -docstring "buffers - Select an open buffer" b ': fzf-buffers<ret>'
-  map global fuzzy -docstring "files - Select files in project" f ': fzf-files<ret>'
-
-  # Create a new window
-  map global normal <c-t> ': connect-terminal<ret>'
-  map global normal <c-k> ': connect-shell kitty<ret>'
-  map global normal <c-r> ': split<ret>'
-
-  # build replace cmake default
-  map global cmake  'B' ': > cmake --build build -- -j 9<ret>'                   -docstring 'verbose build'
-  map global cmake  'I' ': > cmake --build build --target install -- -j 9<ret>'  -docstring 'verbose build'
-}
 ## Selection
 
 # one by one manip
@@ -556,8 +534,7 @@ plug "occivink/kakoune-phantom-selection" %{
 ## Text
 
 # surround
-plug "CharlesGueunet/auto-pairs.kak" %{
-  require-module prelude
+plug "alexherbo2/auto-pairs.kak" %{
   require-module auto-pairs
   auto-pairs-enable
 }
