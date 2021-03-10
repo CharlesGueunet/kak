@@ -519,6 +519,10 @@ plug "alexherbo2/connect.kak" do %{
   alias global explore-files fzf-files
   alias global explore-buffers fzf-buffers
 
+  hook global KakBegin .* %{
+    alias global popup tmux-repl-window
+  }
+
   declare-user-mode fuzzy
   map -docstring "Fuzzy finder commands" global normal <c-p> %{:enter-user-mode fuzzy<ret>}
   map global fuzzy -docstring "buffers - Select an open buffer" b ': fzf-buffers<ret>'
@@ -556,8 +560,7 @@ plug "CharlesGueunet/auto-pairs.kak" %{
   require-module auto-pairs
   auto-pairs-enable
 }
-plug "CharlesGueunet/word-select.kak" %{
-  require-module prelude
+plug "alexherbo2/word-select.kak" %{
   require-module word-select
   map global normal w ': word-select-next-word<ret>'
   map global normal <a-w> ': word-select-next-big-word<ret>'
