@@ -64,7 +64,7 @@ set-option -add global modelinefmt '{{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' on {green}%val{bufname}{default}'
 # set-option -add global modelinefmt ' {white}(%opt{modeline_buf_nb}){default}'
-set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default}'
+set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default} [%val{session}]'
 
 # Number line column
 # ──────────────────
@@ -508,6 +508,7 @@ plug "Delapouite/kakoune-buffers" %{
 plug "alexherbo2/connect.kak" do %{
   make install
 } config %{
+  require-module prelude
   require-module connect-fzf
 
   set-option global connect_environment %{
