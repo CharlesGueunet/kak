@@ -170,12 +170,6 @@ map global normal '#' :comment-line<ret>
 # clear search buffer
 map global user ',' ': set-register / ""<ret><c-l>: execute-keys "; "<ret>' -docstring 'clear search'
 
-# multiple insert
-define-command -params 1 urk %{
-    execute-keys -with-hooks \;i.<esc>hd %arg{1} P %arg{1} Hs.<ret><a-space>c
-}
-map global user i %{:urk %val{count}<ret>} -docstring "countable insert"
-
 # restore last selection
 hook -group backup-selections global NormalIdle .* %{
   set-register b %reg{z}
@@ -530,6 +524,7 @@ declare-user-mode fuzzy
 map global normal <c-p> %{:enter-user-mode fuzzy<ret>} -docstring "fzf commands"
 map global fuzzy b ": > kcr-fzf-buffers<ret>"          -docstring "buffers"
 map global fuzzy f ": > kcr-fzf-files<ret>"            -docstring "files"
+map global fuzzy g ": > kcr-fzf-grep<ret>"             -docstring "grep"
 
 # Plugins
 # ───────
