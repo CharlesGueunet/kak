@@ -35,3 +35,7 @@ source "%val{config}/lint.kak"
 
 # all plugins are here
 source "%val{config}/plug.kak"
+
+try %{
+  source "%val{config}/local.kak"
+}
