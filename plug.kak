@@ -24,7 +24,7 @@ plug "occivink/kakoune-phantom-selection" %{
   map global selection <a-F> ": phantom-selection-iterate-prev<ret>"                        -docstring 'prev selection'
   map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>a"
   map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>a"
-  set-face global PhantomSelection default,rgb:408040
+  set-face global PhantomSelection default,default+u
 }
 
 ## Text
@@ -93,3 +93,6 @@ plug "occivink/kakoune-snippets" config %{
     map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
+
+# plug "raiguard/one.kak" theme
+

@@ -2,7 +2,7 @@
 # ──────
 
 set-face global PrimarySelection default,rgba:30308080
-set-face global SecondarySelection default,rgba:80303040
+set-face global SecondarySelection default,rgba:30803040
 set-face global Whitespace rgba:55555520,default
 set-face global Trailling default,rgba:55555520
 

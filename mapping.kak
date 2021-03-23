@@ -67,7 +67,7 @@ hook -group backup-selections global NormalIdle .* %{
   set-register b %reg{z}
   execute-keys -draft '"zZ'
 }
-map -docstring 'Restore selections from the [b]ackup register' global user z '"bz'
+map -docstring 'Restore selections from the backup register' global user z '"bz'
 
 # find file
 define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
