@@ -33,6 +33,6 @@ map global quickmove '(' '<a-f>);'    -docstring 'parenthesis block above'
 map global quickmove ')' 'f);'        -docstring 'parenthesis block below'
 map global quickmove 'n' '<esc><tab>' -docstring 'jump next position'
 map global quickmove 'p' '<esc><c-o>' -docstring 'jump previous position'
-# TODO: < > one indent level above / under
-map global quickmove '<' '[i;kI<esc>'                     -docstring 'previous indent level'
+# < > one indent level above / under
+map global quickmove '<' '[i;kI<esc>' -docstring 'previous indent level'
 map global quickmove '>' 'x: go-to-inner-ident<ret>' -docstring 'next indent level'
