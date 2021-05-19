@@ -11,6 +11,28 @@ evaluate-commands %sh{
 }
 plug "andreyorst/plug.kak" noload
 
+## States
+
+plug "https://gitlab.com/Screwtapello/kakoune-state-save" %{
+  hook global KakBegin .* %{
+      state-save-reg-load dquote
+      state-save-reg-load colon
+      state-save-reg-load pipe
+      state-save-reg-load slash
+      state-save-reg-load arobase
+      # make the q register persitent
+      state-save-reg-load q
+  }
+  hook global KakEnd .* %{
+      state-save-reg-save dquote
+      state-save-reg-save colon
+      state-save-reg-save pipe
+      state-save-reg-save slash
+      state-save-reg-save arobase
+      state-save-reg-save q
+  }
+}
+
 ## Buffers
 
 plug "Delapouite/kakoune-buffers" %{
