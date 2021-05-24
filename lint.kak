@@ -16,7 +16,7 @@ declare-user-mode lint-python
 # Shell
 
 hook global WinSetOption filetype=sh %{
-  set-option window lintcmd "shellcheck -fgcc -Cnever"
+  set-option window lintcmd "shellcheck -x -fgcc -Cnever"
   set-option buffer formatcmd "shfmt -i 4"
   declare-user-mode lint-shell
   map global user 'l' ': enter-user-mode lint-shell<ret>'  -docstring 'enter lint mode'
