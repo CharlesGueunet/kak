@@ -34,21 +34,6 @@ plug "Delapouite/kakoune-buffers" %{
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
 
-## Selection
-
-# one by one manip
-plug "occivink/kakoune-phantom-selection" %{
-  declare-user-mode selection
-  map global user 'f' ': enter-user-mode selection<ret>'                                    -docstring 'phantom selection manipulations'
-  map global selection a     ": phantom-selection-add-selection<ret>"                       -docstring 'add selection'
-  map global selection r     ": phantom-selection-select-all; phantom-selection-clear<ret>" -docstring 'reset selection'
-  map global selection <a-f> ": phantom-selection-iterate-next<ret>"                        -docstring 'next selection'
-  map global selection <a-F> ": phantom-selection-iterate-prev<ret>"                        -docstring 'prev selection'
-  map global insert <a-f>    "<esc>: phantom-selection-iterate-next<ret>a"
-  map global insert <a-F>    "<esc>: phantom-selection-iterate-prev<ret>a"
-  set-face global PhantomSelection default,default+u
-}
-
 ## Text
 
 # surround
@@ -112,8 +97,5 @@ plug "occivink/kakoune-snippets" config %{
   map global insert '<c-s>' '<a-;>: snippets-expand-trigger<ret><esc>'
   map global insert '<c-n>' '<a-;>: snippets-select-next-placeholders<ret><esc>'
   map global normal '<c-n>' ': snippets-select-next-placeholders<ret>'
-  declare-user-mode snippets
-  map global user 'S' ': enter-user-mode snippets<ret>' -docstring 'snippet menu'
-  map global snippets 's' ': snippets-info<ret>' -docstring 'show snippets'
 }
 plug "andreyorst/kakoune-snippet-collection"
