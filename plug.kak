@@ -36,18 +36,6 @@ plug "Delapouite/kakoune-buffers" %{
 
 ## Text
 
-# surround
-plug "alexherbo2/auto-pairs.kak" %{
-  require-module auto-pairs
-  auto-pairs-enable
-}
-plug "alexherbo2/word-select.kak" %{
-  require-module word-select
-  map global normal w ': word-select-next-word<ret>'
-  map global normal <a-w> ': word-select-next-big-word<ret>'
-  map global normal q ': word-select-previous-word<ret>'
-  map global normal <a-q> ': word-select-previous-big-word<ret>'
-}
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
   map global normal '<c-s>' ': enter-user-mode surround<ret>'
@@ -99,3 +87,8 @@ plug "occivink/kakoune-snippets" config %{
   map global normal '<c-n>' ': snippets-select-next-placeholders<ret>'
 }
 plug "andreyorst/kakoune-snippet-collection"
+
+## Kakoune CR managed conf (replace plugins)
+
+source "%val{config}/auto-pairs.kak"
+enable-auto-pairs

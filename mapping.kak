@@ -70,7 +70,7 @@ hook -group backup-selections global NormalIdle .* %{
 map -docstring 'Restore selections from the backup register' global user z '"bz'
 
 # find file
-define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
+# define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
 
 # Safe save
 define-command -params 0..1 secure_write %{ evaluate-commands %sh{
