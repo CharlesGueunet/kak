@@ -53,7 +53,7 @@ plug "ul/kak-lsp" do %{
   define-command lsp-restart %{ lsp-stop; lsp-start }
   set-option global lsp_completion_trigger "execute-keys 'h<a-h><a-k>\S[^\h\n,=;*(){}\[\]]\z<ret>'"
   set-option global lsp_diagnostic_line_error_sign "!"
-  set-option global lsp_diagnostic_line_warning_sign "?"
+  set-option global lsp_diagnostic_line_warning_sign "•"
   hook global WinSetOption filetype=* %{
     set-option window lsp_hover_anchor false
   }
@@ -88,7 +88,7 @@ plug "occivink/kakoune-snippets" config %{
 }
 plug "andreyorst/kakoune-snippet-collection"
 
-## Kakoune CR managed conf (replace plugins)
+## Manually managed (given by KCr)
 
 source "%val{config}/auto-pairs.kak"
 enable-auto-pairs
