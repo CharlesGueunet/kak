@@ -55,6 +55,7 @@ map global normal <c-p> %{:enter-user-mode fuzzy<ret>} -docstring "fzf commands"
 map global fuzzy b ": > kcr-fzf-buffers<ret>"          -docstring "buffers"
 map global fuzzy f ": > kcr-fzf-files<ret>"            -docstring "files"
 map global fuzzy g ": > kcr-fzf-grep<ret>"             -docstring "grep"
+map global fuzzy <space> ": > broot<ret>"              -docstring "broot"
 
 # alt + direction (insert mode)
 map global insert <a-h> '<a-;><a-h>'
