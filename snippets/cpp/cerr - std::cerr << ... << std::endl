@@ -1,0 +1,1 @@
+std::err << ${0:"message"} << std::endl;
