@@ -36,6 +36,7 @@ plug "Delapouite/kakoune-buffers" %{
 
 ## Text
 
+# handle () {} "" ...
 plug "h-youhei/kakoune-surround" %{
   declare-user-mode surround
   map global normal '<c-s>' ': enter-user-mode surround<ret>'
@@ -43,6 +44,14 @@ plug "h-youhei/kakoune-surround" %{
   map global surround c ': change-surround<ret>'        -docstring 'change'
   map global surround d ': delete-surround<ret>'        -docstring 'delete'
   map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
+}
+
+#selection buffer
+plug https://gitlab.com/kstr0k/sel-editor.kak %{
+} demand sel-editor %{
+  # selection-editor
+  declare-user-mode selection-editor
+  map global user "s" %{: sel-editor-live-new<ret>} -docstring "selection-editor panel"
 }
 
 # completion
