@@ -1,1 +1,1 @@
-std::err << ${0:"message"} << std::endl;
+std::cerr << ${0:"message"} << std::endl;
