@@ -5,13 +5,13 @@ set-option global autoreload yes
 set-option global scrolloff 3,5
 set-option global tabstop 2
 set-option global indentwidth 2
-# set-option global grepcmd 'ag --hidden --ignore .ccls-cache --ignore build*'
+set-option global grepcmd 'ag --hidden --ignore .ccls-cache --ignore build*'
 
 # Session
 # ───────
 
 evaluate-commands %sh{
-  kcr init kakoune
+  kks init
 }
 
 # Config

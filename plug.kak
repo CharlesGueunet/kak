@@ -11,22 +11,6 @@ evaluate-commands %sh{
 }
 plug "andreyorst/plug.kak" noload
 
-## States
-
-plug "https://gitlab.com/Screwtapello/kakoune-state-save" %{
-  hook global KakBegin .* %{
-    state-save-reg-load pipe
-    state-save-reg-load arobase
-    # make the q register persitent
-    state-save-reg-load q
-  }
-  hook global KakEnd .* %{
-    state-save-reg-save pipe
-    state-save-reg-save arobase
-    state-save-reg-save q
-  }
-}
-
 ## Buffers
 
 plug "Delapouite/kakoune-buffers" %{
@@ -44,6 +28,10 @@ plug "h-youhei/kakoune-surround" %{
   map global surround c ': change-surround<ret>'        -docstring 'change'
   map global surround d ': delete-surround<ret>'        -docstring 'delete'
   map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
+}
+
+plug "alexherbo2/auto-pairs.kak" %{
+  enable-auto-pairs
 }
 
 #selection buffer
@@ -97,7 +85,3 @@ plug "occivink/kakoune-snippets" config %{
 }
 plug "andreyorst/kakoune-snippet-collection"
 
-## Manually managed (given by KCr)
-
-source "%val{config}/auto-pairs.kak"
-enable-auto-pairs
