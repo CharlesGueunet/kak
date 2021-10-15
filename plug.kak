@@ -54,10 +54,10 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=* %{
     set-option window lsp_hover_anchor false
   }
-  # hook global WinSetOption filetype=(cmake) %{
-  #     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
-  #     lsp-enable-window
-  # }
+  hook global WinSetOption filetype=(cmake) %{
+      map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
+      lsp-enable-window
+  }
   hook global WinSetOption filetype=(c|cpp|rust) %{
     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
     lsp-enable-window
