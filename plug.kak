@@ -34,14 +34,6 @@ plug "alexherbo2/auto-pairs.kak" %{
   enable-auto-pairs
 }
 
-#selection buffer
-plug https://gitlab.com/kstr0k/sel-editor.kak %{
-} demand sel-editor %{
-  # selection-editor
-  declare-user-mode selection-editor
-  map global user "s" %{: sel-editor-live-new<ret>} -docstring "selection-editor panel"
-}
-
 # completion
 plug "ul/kak-lsp" do %{
   cargo build --release --locked
