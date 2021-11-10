@@ -41,7 +41,6 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake 'p' ':cmake_set_parallel ' -docstring 'parallelism level'
 
   # processing
-  declare-option str modeline_build_status_internal ''
   define-command -override -hidden -params 1 cmake-fifo %{
     set-option global modeline_build_status_internal '●'
     evaluate-commands %sh{
@@ -52,10 +51,13 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
       printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
                 edit! -fifo ${fifo_file} *CMake* -scroll
                 hook -always -once buffer BufCloseFifo .* %{
-                  set-option global modeline_build_status_internal ' '
+                  nop
                   %sh{ rm -r $(dirname ${fifo_file}) }
                 }
             }"
+    }
+    hook -always -once buffer BufCloseFifo .* %{
+      set-option global modeline_build_status_internal ' '
     }
   }
   define-command -override cmake-build -docstring "Verbose build" %{

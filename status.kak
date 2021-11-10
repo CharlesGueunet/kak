@@ -34,8 +34,12 @@
 # }
 
 declare-option str modeline_build_status ''
+declare-option str modeline_build_status_internal ''
 hook global WinCreate .* %{
     hook window NormalIdle .* %{
+      set-option window modeline_build_status %opt{modeline_build_status_internal}
+    }
+    hook window BufClose .* %{
       set-option window modeline_build_status %opt{modeline_build_status_internal}
     }
 }
