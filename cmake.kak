@@ -41,14 +41,20 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake 'p' ':cmake_set_parallel ' -docstring 'parallelism level'
 
   # processing
-  define-command -override -hidden -params 1 cmake-fifo %{ evaluate-commands %sh{
+  declare-option str modeline_build_status_internal ''
+  define-command -override -hidden -params 1 cmake-fifo %{
+    set-option global modeline_build_status_internal '●'
+    evaluate-commands %sh{
       cmake_opt=$1
       fifo_file=$(mktemp -d "${TMPDIR:-/tmp}"/kak-build.XXXXXXXX)/fifo
       mkfifo ${fifo_file}
       ( cmake ${cmake_opt} > $fifo_file 2>&1 && notify-send "CMake sucess" || notify-send -u critical "CMake failed" & ) > /dev/null 2>&1 < /dev/null
       printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
                 edit! -fifo ${fifo_file} *CMake* -scroll
-                hook -always -once buffer BufCloseFifo .* %{ nop %sh{ rm -r $(dirname ${fifo_file}) } }
+                hook -always -once buffer BufCloseFifo .* %{
+                  set-option global modeline_build_status_internal ' '
+                  %sh{ rm -r $(dirname ${fifo_file}) }
+                }
             }"
     }
   }

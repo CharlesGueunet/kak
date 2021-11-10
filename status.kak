@@ -33,8 +33,16 @@
 #     } }
 # }
 
+declare-option str modeline_build_status ''
+hook global WinCreate .* %{
+    hook window NormalIdle .* %{
+      set-option window modeline_build_status %opt{modeline_build_status_internal}
+    }
+}
+
 # left to right
 set-option global modelinefmt ''
+set-option -add global modelinefmt ' {red}%opt{modeline_build_status}{default}'
 set-option -add global modelinefmt '{{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' on {green}%val{bufname}{default}'
