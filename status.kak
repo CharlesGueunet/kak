@@ -18,7 +18,7 @@ hook global WinCreate .* %{
     hook window NormalIdle .* %{ evaluate-commands %sh{
         repo=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --git-dir 2> /dev/null)
         if [ -n "${repo}" ]; then
-            printf 'set window modeline_git_val "git:"'
+            printf 'set window modeline_git_val "▒ "'
         else
             printf 'set window modeline_git_val ""'
         fi
@@ -49,6 +49,6 @@ set-option global modelinefmt ''
 set-option -add global modelinefmt ' {red}%opt{modeline_build_status}{default}'
 set-option -add global modelinefmt '{{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
-set-option -add global modelinefmt ' on {green}%val{bufname}{default}'
-set-option -add global modelinefmt ' %opt{modeline_git_val}{yellow}%opt{modeline_git_branch}{default} [%val{session}]'
+set-option -add global modelinefmt ' {green,black}{black,green}¶ {green,black} %val{bufname}{default}'
+set-option -add global modelinefmt ' %opt{modeline_git_val}{blue}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {red,black} %val{session}'
 
