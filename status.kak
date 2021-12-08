@@ -49,6 +49,6 @@ set-option global modelinefmt ''
 set-option -add global modelinefmt ' {red}%opt{modeline_build_status}{default}'
 set-option -add global modelinefmt '{{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
-set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {yellow,black} %val{bufname}{default}'
-set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {red,black} %val{session}'
+set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {white,black} %val{bufname}{default}'
+set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}{white,black}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {white,black} %val{session}'
 
