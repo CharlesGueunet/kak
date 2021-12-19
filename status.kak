@@ -33,21 +33,20 @@ hook global WinCreate .* %{
     } }
 }
 
-declare-option str modeline_build_status ''
-declare-option str modeline_build_status_internal ''
-hook global WinCreate .* %{
-    hook window NormalIdle .* %{
-      set-option window modeline_build_status %opt{modeline_build_status_internal}
-    }
-    hook window BufClose .* %{
-      set-option window modeline_build_status %opt{modeline_build_status_internal}
-    }
+# Make / Grep indicator
+declare-option str modeline_fifo_status ''
+hook -once global BufOpenFifo .* %{
+  set-option global modeline_fifo_status '●'
+}
+hook -once global BufCloseFifo .* %{
+  set-option global modeline_fifo_status ' '
+  echo "done"
 }
 
 # left to right
 set-option global modelinefmt ''
-set-option -add global modelinefmt ' {red}%opt{modeline_build_status}{default}'
-set-option -add global modelinefmt '{{context_info}}'
+set-option -add global modelinefmt '{red}%opt{modeline_fifo_status}{default}'
+set-option -add global modelinefmt ' {{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {white,black} %val{bufname}{default}'
 set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}{white,black}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {white,black} %val{session}'

@@ -1,13 +1,5 @@
 declare-user-mode cmake
 
-hook global BufCreate \*make\* %{
-  set-option global modeline_build_status_internal '● '
-}
-
-hook global BufCloseFifo \*make\* %{
-  set-option global modeline_build_status_internal '  '
-}
-
 hook global WinSetOption filetype=(c|cpp|cmake) %{
 
   # Tools
