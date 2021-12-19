@@ -35,10 +35,10 @@ hook global WinCreate .* %{
 
 # Make / Grep indicator
 declare-option str modeline_fifo_status ''
-hook -once global BufOpenFifo .* %{
+hook global BufOpenFifo .* %{
   set-option global modeline_fifo_status '●'
 }
-hook -once global BufCloseFifo .* %{
+hook global BufCloseFifo .* %{
   set-option global modeline_fifo_status ' '
   echo "done"
 }

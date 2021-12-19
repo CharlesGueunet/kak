@@ -57,6 +57,8 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake  's' ': buffer *make*<ret>'                 -docstring 'show CMake buffer'
   map global cmake  'd' ': delete-buffer *make*<ret>'          -docstring 'delete CMake buffer'
   map global cmake  'P' ': echo %opt{makecmd}<ret>'            -docstring 'print command'
+  map global cmake  'b' ': eval -draft make<ret>'              -docstring 'build (background)'
+  map global cmake  'B' ': make<ret>'                          -docstring 'build'
 
   # Init
 
