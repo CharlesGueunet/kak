@@ -24,12 +24,13 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   declare-option -docstring 'build config' str cmake_opt_config
   set-option global cmake_opt_config " "
   define-command -override cmake_set_config -params 1 %{
-      set-option global cmake_opt_config " --config %arg{1}"
+      set-option global cmake_opt_config " %arg{1}"
       cmake_set_command
   }
   map global cmake 'c' ': enter-user-mode cmake-config<ret>'    -docstring 'enter config mode'
-  map global cmake-config 'd' ': cmake_set_config Debug<ret>'   -docstring 'set config to Debug'
-  map global cmake-config 'r' ': cmake_set_config Release<ret>' -docstring 'set config to Release'
+  map global cmake-config 'd' ': cmake_set_config "--config Debug"<ret>'   -docstring 'set config to Debug'
+  map global cmake-config 'r' ': cmake_set_config "--config Release"<ret>' -docstring 'set config to Release'
+  map global cmake-config 'n' ': cmake_set_config ""<ret>' -docstring 'set no config'
 
   # Target (for multi-target generators)
   declare-user-mode cmake-target
