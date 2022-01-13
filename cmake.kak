@@ -49,6 +49,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   set-option global cmake_parallel_command " "
   define-command -override cmake_set_parallel -params 1 %{
       set-option global cmake_parallel_command " -- -j %arg{1}"
+      cmake_set_command
   }
   map global cmake 'p' ':cmake_set_parallel ' -docstring 'parallelism level'
 
