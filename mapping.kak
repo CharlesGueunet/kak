@@ -98,6 +98,20 @@ hook global RegisterModified '"' %{ nop %sh{
   printf %s "$kak_main_reg_dquote" | xsel --input --clipboard
 }}
 
+# Vim like
+# ----------
+
+map -docstring 'increment selection' global normal <c-a> ': increment-selection %val{count}<ret>'
+map -docstring 'decrement selection' global normal <c-x> ': decrement-selection %val{count}<ret>'
+
+define-command -override increment-selection -params 1 -docstring 'increment-selection <count>: increment selection by count' %{
+  execute-keys "a+%sh{expr $1 '|' 1}<esc>|{ cat; echo; } | bc<ret>"
+}
+
+define-command -override decrement-selection -params 1 -docstring 'decrement-selection <count>: decrement selection by count' %{
+  execute-keys "a-%sh{expr $1 '|' 1}<esc>|{ cat; echo; } | bc<ret>"
+}
+
 # Custom object selections
 # ─────────────────────────
 
