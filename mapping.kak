@@ -70,6 +70,21 @@ hook -group backup-selections global NormalIdle .* %{
 }
 map -docstring 'Restore selections from the backup register' global user z '"bz'
 
+# sort buffer alphabetically
+define-command -override sort-buffers %{
+  eval %sh{
+    # XXX use uuid to avoid user conflict with root here
+    rm /tmp/buflist
+    for bufname in $kak_opt_quickbufs $kak_buflist
+      do printf "%s\n" "$bufname" >> /tmp/buflist
+    done
+    cat /tmp/buflist | awk '!seen[$0]++' | grep -v "/tmp/buflist" | sort | tr '\n' ' ' > /tmp/buflist_tmp
+    printf "arrange-buffers "
+    cat /tmp/buflist_tmp
+    rm /tmp/buflist /tmp/buflist_tmp
+  }
+}
+
 # find file
 # define-command find -params 1 -shell-script-candidates %{ find . -type f } %{ edit %arg{1} }
 
