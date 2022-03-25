@@ -65,6 +65,13 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=rust %{
     set-option window lsp_server_configuration rust.clippy_preference="on"
   }
+  # inlay
+  hook global WinSetOption filetype=(rust|python|nim|go|javascript|typescript|c|cpp) %{
+    lsp-inlay-diagnostics-enable buffer
+    hook buffer ModeChange pop:insert:normal %{ lsp-inlay-diagnostics-enable buffer }
+    hook buffer ModeChange push:normal:insert %{ lsp-inlay-diagnostics-disable buffer }
+  }
+  # clean
   hook global KakEnd .* lsp-exit
 }
 
