@@ -17,7 +17,7 @@ plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
-plug "natasky/kakoune-multi-file"
+# plug "natasky/kakoune-multi-file"
 
 ## Text
 
@@ -60,7 +60,10 @@ plug "ul/kak-lsp" do %{
     set-face window DiagnosticWarning default+u
   }
   hook global WinSetOption filetype=python %{
+    map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
     lsp-enable-window
+    lsp-auto-hover-enable
+    lsp-auto-hover-insert-mode-enable
   }
   hook global WinSetOption filetype=rust %{
     set-option window lsp_server_configuration rust.clippy_preference="on"
