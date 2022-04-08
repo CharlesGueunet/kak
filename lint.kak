@@ -23,13 +23,13 @@ hook global WinSetOption filetype=python %{
 # Shell
 
 hook global WinSetOption filetype=sh %{
-  set-option window lintcmd "shellcheck -x -fgcc -Cnever"
+  set-option window lintcmd "shellcheck -x -f gcc -Cnever -a"
   set-option buffer formatcmd "shfmt -i 4"
-  declare-user-mode lint-shell
-  map global user 'l' ': enter-user-mode lint-shell<ret>'  -docstring 'enter lint mode'
-  map global lint-shell 'l' ': lint<ret>'                  -docstring 'update lint'
-  map global lint-shell 'n' ': lint-next-message<ret>'     -docstring 'next error'
-  map global lint-shell 'p' ': lint-previous-message<ret>' -docstring 'previous error'
+  # declare-user-mode lint-shell
+  # map global user 'l' ': enter-user-mode lint-shell<ret>'  -docstring 'enter lint mode'
+  # map global lint-shell 'l' ': lint<ret>'                  -docstring 'update lint'
+  # map global lint-shell 'n' ': lint-next-message<ret>'     -docstring 'next error'
+  # map global lint-shell 'p' ': lint-previous-message<ret>' -docstring 'previous error'
 }
 
 # Txt, md
