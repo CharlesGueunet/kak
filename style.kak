@@ -1,6 +1,8 @@
 # Colors
 # ──────
 
+# set-face global PrimarySelection default,rgba:C0C0F0F0
+# set-face global SecondarySelection default,rgba:A0D0A040
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:10501040
 set-face global Whitespace rgba:55555520,default
@@ -24,6 +26,7 @@ add-highlighter global/ wrap -word -indent -marker ↳
 
 declare-option -hidden regex curword
 set-face global CurWord default,rgba:30303018
+# set-face global CurWord default,rgba:C0C0C0A8
 
 define-command -hidden custom-highlight-word-cursor %{
   eval -draft %{
