@@ -79,3 +79,50 @@ define-command conflict-use-2 %{
   }
 } -docstring "resolve a conflict by using the second version"
 
+# -----------
+
+define-command -hidden kit-status-select %{
+    try %{
+        execute-keys '<a-:><a-x>1s^(?:[ !\?ACDMRTUacdmrtu]{2}|\t(?:(?:both )?modified:|added:|new file:|deleted(?: by \w+)?:|renamed:|copied:))?\h+(?:[^\n]+ -> )?([^\n]+)<ret>'
+    }
+}
+
+define-command -hidden kit-log-select %{
+    try %{
+        execute-keys '<a-x>2s^[\*|\\ /_]*(\w+)?(\b[0-9a-f]{4,40}\b)<ret><a-:>'
+    }
+}
+
+hook -group kit-status global WinSetOption filetype=git-status %{
+    hook -group kit-status window NormalKey '[JKjk%]|<esc>' kit-status-select
+    hook -once -always window WinSetOption filetype=.* %{
+        remove-hooks window kit-status
+    }
+}
+
+hook -group kit-log global WinSetOption filetype=git-log %{
+    hook -group kit-log window NormalKey '[JKjk%]|<esc>' kit-log-select
+    hook -once -always window WinSetOption filetype=.* %{
+        remove-hooks window kit-log
+    }
+}
+
+map global user G ': git status -bs<ret>' -docstring 'git status'
+hook global WinSetOption filetype=git-status %{
+    map window normal c ': git commit --verbose '
+    map window normal l ': git log --oneline --graph<ret>'
+    map window normal d ': -- %val{selections}<a-!><home> git diff '
+    map window normal D ': -- %val{selections}<a-!><home> git diff --cached '
+    map window normal a ': -- %val{selections}<a-!><home> git add '
+    map window normal A ': -- %val{selections}<a-!><home> terminal git add -p '
+    map window normal r ': -- %val{selections}<a-!><home> git reset '
+    map window normal R ': -- %val{selections}<a-!><home> terminal git reset -p '
+    map window normal o ': -- %val{selections}<a-!><home> git checkout '
+}
+hook global WinSetOption filetype=git-log %{
+    map window normal d     ': %val{selections}<a-!><home> git diff '
+    map window normal <ret> ': %val{selections}<a-!><home> git show '
+    map window normal r     ': %val{selections}<a-!><home> git reset '
+    map window normal R     ': %val{selections}<a-!><home> terminal git reset -p '
+    map window normal o     ': %val{selections}<a-!><home> git checkout '
+}
