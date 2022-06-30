@@ -23,7 +23,7 @@ map global normal '#' :comment-line<ret>
 map global normal = '|fmt -w $kak_opt_autowrap_column<ret>'
 
 # clear search buffer
-map global user ',' ': set-register / ""<ret><c-l>: execute-keys "; "<ret>' -docstring 'clear search'
+map global user ',' ': set-register slash \<ret><c-l>: execute-keys "; "<ret>' -docstring 'clear search'
 
 # case insensitive search
 map global user '/' '/(?i)' -docstring "case insensitive search"
