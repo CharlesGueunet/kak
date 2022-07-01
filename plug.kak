@@ -58,12 +58,26 @@ plug "ul/kak-lsp" do %{
     lsp-auto-hover-insert-mode-enable
     set-face window DiagnosticError default+u
     set-face window DiagnosticWarning default+u
+
+    hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+    hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+    hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+    hook -once -always window WinSetOption filetype=.* %{
+      remove-hooks window semantic-tokens
+    }
   }
   hook global WinSetOption filetype=python %{
     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
     lsp-enable-window
     lsp-auto-hover-enable
     lsp-auto-hover-insert-mode-enable
+
+    hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+    hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+    hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+    hook -once -always window WinSetOption filetype=.* %{
+      remove-hooks window semantic-tokens
+    }
   }
   hook global WinSetOption filetype=rust %{
     set-option window lsp_server_configuration rust.clippy_preference="on"
