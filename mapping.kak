@@ -1,8 +1,6 @@
 # Custom mappings
 # ───────────────
 
-map global normal , <space>     # leader is space
-map global normal <space> ,     # back to one selection
 map global normal \' \"         # quick register mode
 map global normal <ret> :       # quick command mode
 map global normal <tab> '<a-;>' # switch side
@@ -23,7 +21,7 @@ map global normal '#' :comment-line<ret>
 map global normal = '|fmt -w $kak_opt_autowrap_column<ret>'
 
 # clear search buffer
-map global user ',' ': set-register slash \<ret><c-l>: execute-keys "; "<ret>' -docstring 'clear search'
+map global user ',' ': set-register slash \<ret><c-l>: execute-keys ", "<ret>' -docstring 'clear search'
 
 # case insensitive search
 map global user '/' '/(?i)' -docstring "case insensitive search"
@@ -133,21 +131,6 @@ define-command -override decrement-selection -params 1 -docstring 'decrement-sel
 # select previous word (bash like)
 # useful for snippets
 map global insert <c-w> '<a-;>h<a-;><a-B>'
-
-# x extend selection below, X above
-def -params 1 extend-line-down %{
-  exec "<a-:>%arg{1}X"
-}
-def -params 1 extend-line-up %{
-  exec "<a-:><a-;>%arg{1}K<a-;>"
-  try %{
-    exec -draft ';<a-K>\n<ret>'
-    exec X
-  }
-  exec '<a-;><a-X>'
-}
-map global normal x ': extend-line-down %val{count}<ret>'
-map global normal X ': extend-line-up %val{count}<ret>'
 
 # Current indented paragraph object
 define-command -hidden custom-indented-paragraph %{
