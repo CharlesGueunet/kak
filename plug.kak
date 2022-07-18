@@ -102,3 +102,10 @@ plug "occivink/kakoune-snippets" config %{
 }
 plug "andreyorst/kakoune-snippet-collection"
 
+plug "base16-project/base16-kakoune" theme config %{
+    colorscheme base16-material-darker
+    set-face global PrimarySelection default,rgba:3030F080
+    set-face global SecondarySelection default,rgba:10F01040
+    set-face global Whitespace rgba:55555520,default
+    set-face global Trailling default,rgba:55555520+F
+}
