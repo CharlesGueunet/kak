@@ -18,7 +18,7 @@ hook global WinCreate .* %{
     hook window NormalIdle .* %{ evaluate-commands %sh{
         repo=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --git-dir 2> /dev/null)
         if [ -n "${repo}" ]; then
-            printf 'set window modeline_git_val "▒ "'
+            printf 'set window modeline_git_val "▚▏"'
         else
             printf 'set window modeline_git_val ""'
         fi
