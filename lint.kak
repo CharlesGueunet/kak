@@ -2,21 +2,28 @@
 
 hook global WinSetOption filetype=c %{
     set-option window lintcmd "cppcheck --language=c --enable=warning,style,information --template='{file}:{line}:{column}: {severity}: {message}' --suppress='*:*.h' 2>&1"
-    set-option window formatcmd 'clang-format'
+    set-option window formatcmd "clang-format"
 }
 
 # C++
 
 hook global WinSetOption filetype=cpp %{
     set-option window lintcmd "cppcheck --language=c++ --enable=warning,style,information --template='{file}:{line}:{column}: {severity}: {message}' --suppress='*:*.h' --suppress='*:*.hh' 2>&1"
-    set-option window formatcmd 'clang-format'
+    set-option window formatcmd "clang-format"
+}
+
+# JSON
+
+hook global WinSetOption filetype=json %{
+    set-option window lintcmd %{ run() { cat -- "$1" | jq 2>&1 | awk -v filename="$1" '/ at line [0-9]+, column [0-9]+$/ { line=$(NF - 2); column=$NF; sub(/ at line [0-9]+, column [0-9]+$/, ""); printf "%s:%d:%d: error: %s", filename, line, column, $0; }'; } && run }
+    set-option window formatcmd "jq --indent 2"
 }
 
 # Python
 
 hook global WinSetOption filetype=python %{
   jedi-enable-autocomplete
-  set-option buffer formatcmd 'black -'
+  set-option buffer formatcmd "black -"
   set-option window lintcmd "flake8 --filename='*' --format='%%(path)s:%%(row)d:%%(col)d: error: %%(text)s' --ignore=E121,E123,E126,E226,E24,E704,W503,W504,E501,E221,E127,E128,E129,F405"
 }
 
