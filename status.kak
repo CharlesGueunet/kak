@@ -51,3 +51,5 @@ set-option -add global modelinefmt ' {{mode_info}}'
 set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {white,black} %val{bufname}{default}'
 set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}{white,black}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {white,black} %val{session}'
 
+set-option global ui_options terminal_status_on_top=true
+
