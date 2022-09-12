@@ -54,13 +54,13 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   map global cmake 'p' ':cmake_set_parallel ' -docstring 'parallelism level'
 
   # main block
-  map global user   'c' ': enter-user-mode cmake<ret>'         -docstring 'enter CMake mode'
-  map global cmake  'g' ': terminal ccmake -S . -B build<ret>' -docstring 'gui CMake'
-  map global cmake  's' ': buffer *make*<ret>'                 -docstring 'show CMake buffer'
-  map global cmake  'd' ': delete-buffer *make*<ret>'          -docstring 'delete CMake buffer'
-  map global cmake  'P' ': echo %opt{makecmd}<ret>'            -docstring 'print command'
-  map global cmake  'b' ': eval -draft make<ret>'              -docstring 'build (background)'
-  map global cmake  'B' ': make<ret>'                          -docstring 'build'
+  map global user   'c' ': enter-user-mode cmake<ret>'                                -docstring 'enter CMake mode'
+  map global cmake  'g' ': terminal ccmake -S . -B %opt{cmake_opt_build_folder}<ret>' -docstring 'gui CMake'
+  map global cmake  's' ': buffer *make*<ret>'                                        -docstring 'show CMake buffer'
+  map global cmake  'd' ': delete-buffer *make*<ret>'                                 -docstring 'delete CMake buffer'
+  map global cmake  'P' ': echo %opt{makecmd}<ret>'                                   -docstring 'print command'
+  map global cmake  'b' ': eval -draft make<ret>'                                     -docstring 'build (background)'
+  map global cmake  'B' ': make<ret>'                                                 -docstring 'build'
 
   # Init
 
