@@ -45,11 +45,11 @@ hook global BufCloseFifo .* %{
 
 # left to right
 set-option global modelinefmt ''
-set-option -add global modelinefmt '{red}%opt{modeline_fifo_status}{default}'
+set-option -add global modelinefmt '{red}%opt{modeline_fifo_status}'
 set-option -add global modelinefmt ' {{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
-set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {white,black} %val{bufname}{default}'
-set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}{white,black}%opt{modeline_git_branch}{default} {red,black}{black,red}⚙ {white,black} %val{session}'
+set-option -add global modelinefmt ' {yellow,black}{black,yellow}¶ {white,black} %val{bufname}{default,black}'
+set-option -add global modelinefmt ' {green,black}%opt{modeline_git_val}{white,black}%opt{modeline_git_branch}{default,black} {red,black}{black,red}⚙ {white,black} %val{session}'
 
 set-option global ui_options terminal_status_on_top=true
 
