@@ -17,7 +17,7 @@ plug "Delapouite/kakoune-buffers" %{
   map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
   map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
 }
-# plug "natasky/kakoune-multi-file"
+plug "natasky/kakoune-multi-file"
 
 ## Text
 
@@ -30,7 +30,6 @@ plug "h-youhei/kakoune-surround" %{
   map global surround d ': delete-surround<ret>'        -docstring 'delete'
   map global surround t ': select-surrounding-tag<ret>' -docstring 'select tag'
 }
-
 plug "alexherbo2/auto-pairs.kak" %{
   enable-auto-pairs
 }
@@ -47,7 +46,7 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=* %{
     set-option window lsp_hover_anchor false
   }
-  hook global WinSetOption filetype=(cmake|sh) %{
+  hook global WinSetOption filetype=(cmake|sh|markdown) %{
       map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
       lsp-enable-window
   }
