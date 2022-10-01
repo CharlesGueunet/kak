@@ -31,7 +31,7 @@ set-face global CurWord default,rgba:30303018
 define-command -hidden custom-highlight-word-cursor %{
   eval -draft %{
     try %{
-      exec <space><a-i>w <a-k>\A\w+\z<ret>
+      exec ,<a-i>w<ret>
       set-option buffer curword "\b\Q%val{selection}\E\b"
     } catch %{
     }
