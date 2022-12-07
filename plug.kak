@@ -53,8 +53,8 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=(c|cpp|rust) %{
     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
     lsp-enable-window
-    lsp-auto-hover-enable
-    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-disable
+    lsp-auto-hover-insert-mode-disable
     set-face window DiagnosticError default+u
     set-face window DiagnosticWarning default+u
 
@@ -68,8 +68,8 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=python %{
     map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
     lsp-enable-window
-    lsp-auto-hover-enable
-    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-disable
+    lsp-auto-hover-insert-mode-disable
 
     hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
     hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
