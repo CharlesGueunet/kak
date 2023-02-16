@@ -118,7 +118,7 @@ hook global WinSetOption filetype=git-status %{
     map window normal r ': -- %val{selections}<a-!><home> git reset '
     map window normal R ': -- %val{selections}<a-!><home> terminal git reset -p '
     map window normal o ': -- %val{selections}<a-!><home> git checkout '
-    map window normal <space> ': git status -bs<ret>'
+    map window normal <tab> ': git status -bs<ret>'
 }
 hook global WinSetOption filetype=git-log %{
     map window normal d     ': %val{selections}<a-!><home> git diff '
