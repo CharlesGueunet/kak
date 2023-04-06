@@ -199,3 +199,18 @@ diff-selections %{
         fi
     }
 }
+
+define-command -docstring 'Sum selected values.' \
+sum %{
+  evaluate-commands %sh{
+    # add new line to each selection
+    nl_selection=""
+    for sel in $kak_selections; do
+      nl_selection="$sel\n$nl_selection"
+    done
+
+    # replace , by . and compute sum
+    summed_selection=`echo -e "$nl_selection" | sed 's/,/./g' | awk '{s+=$1} END {printf "%.2f\n", s}'`
+    printf 'echo %%{%s}' "${summed_selection}"
+   }
+}
