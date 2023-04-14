@@ -13,9 +13,8 @@ plug "andreyorst/plug.kak" noload
 
 ## Buffers
 
-plug "Delapouite/kakoune-buffers" %{
-  map global user 'b' ': enter-user-mode buffers<ret>' -docstring 'buffers manipulation'
-  map global buffers 'b' ': pick-buffers<ret>' -docstring 'buffer pick'
+plug 'theowenyoung/kakoune-buffer-manager' config %{
+    map global user 'b' ': buffer-manager<ret>' -docstring 'open buffer manager'
 }
 plug "natasky/kakoune-multi-file"
 
