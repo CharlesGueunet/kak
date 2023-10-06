@@ -6,14 +6,13 @@
 set-face global PrimarySelection default,rgba:30308080
 set-face global SecondarySelection default,rgba:10501040
 set-face global Whitespace rgba:55555520,default
-set-face global Trailling default,rgba:55555520+F
 
+add-highlighter global/ show-whitespaces -spc '_' -only-trailing
 add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
 add-highlighter global/ column 80 default,black
 add-highlighter global/ column 120 default,black
-add-highlighter global/show-trailing-whitespaces regex '\h+$' 0:Trailling
 
 # Number line column
 # ──────────────────
