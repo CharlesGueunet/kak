@@ -18,6 +18,12 @@ plug 'theowenyoung/kakoune-buffer-manager' config %{
 }
 plug "natasky/kakoune-multi-file"
 
+set-option global windowing_modules 'x11'
+plug 'delapouite/kakoune-i3' %{
+  # Suggested mapping
+  map global user 3 ': enter-user-mode i3<ret>' -docstring 'i3 mode'
+}
+
 ## Text
 
 # handle () {} "" ...

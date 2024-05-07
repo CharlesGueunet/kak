@@ -47,10 +47,12 @@ define-command split %{
   new eval buffer %val{bufname} ';'
 }
 # map global normal <c-r> ": split<ret>"
-map global normal <c-r> ": with-option windowing_placement horizontal new<ret>"
+# map global normal <c-r> %{: with-option windowing_placement horizontal new<ret>}
+map global normal <c-r> %{: new<ret>}
 
 # open term
-map global normal <c-t> ": with-option windowing_placement horizontal kks-connect terminal<ret>"
+# map global normal <c-t> ": with-option windowing_placement horizontal kks-connect terminal<ret>"
+map global normal <c-t> ": kks-connect terminal<ret>"
 
 # fuzzy
 declare-user-mode fuzzy
