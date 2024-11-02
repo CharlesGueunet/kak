@@ -5,10 +5,20 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
   # Tools
 
   define-command -override cmake_set_command %{
-    set-option global makecmd "cmake --build %opt{cmake_opt_build_folder} %opt{cmake_opt_config} %opt{cmake_opt_target} %opt{cmake_parallel_command}"
+    set-option global makecmd "%opt{cmake_opt_prefix}cmake --build %opt{cmake_opt_build_folder} %opt{cmake_opt_config} %opt{cmake_opt_target} %opt{cmake_parallel_command}"
   }
 
   # Options
+
+
+  # prefix (by default: '')
+  declare-option -docstring 'command prefix'     str cmake_opt_prefix
+  set-option global cmake_opt_prefix "command prefix"
+  define-command -override cmake_set_prefix -params 1 -file-completion %{
+      set-option global cmake_opt_prefix " %arg{1}"
+      cmake_set_command
+  }
+  map global cmake 'p' ':cmake_set_prefix ' -docstring 'set command prefix'
 
   # Build folder (by default: build)
   declare-option -docstring 'build folder'     str cmake_opt_build_folder
@@ -51,7 +61,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
       set-option global cmake_parallel_command " -- -j %arg{1}"
       cmake_set_command
   }
-  map global cmake 'p' ':cmake_set_parallel ' -docstring 'parallelism level'
+  map global cmake 'j' ':cmake_set_parallel ' -docstring 'parallelism level'
 
   # main block
   map global user   'c' ': enter-user-mode cmake<ret>'                                -docstring 'enter CMake mode'

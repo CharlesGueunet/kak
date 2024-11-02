@@ -110,6 +110,7 @@ plug "ul/kak-lsp" do %{
 }
 
 # snippets
+declare-option str snippets_directories ''
 plug "occivink/kakoune-snippets" config %{
   set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
   set-option global snippets_auto_expand false
