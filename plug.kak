@@ -13,8 +13,8 @@ plug "andreyorst/plug.kak" noload
 
 ## Buffers
 
-plug 'theowenyoung/kakoune-buffer-manager' config %{
-    map global user 'b' ': buffer-manager<ret>' -docstring 'open buffer manager'
+plug 'delapouite/kakoune-buffers' %{
+  map global user b ': enter-user-mode buffers<ret>' -docstring 'buffers (lock)'
 }
 plug "natasky/kakoune-multi-file"
 
@@ -44,7 +44,6 @@ plug "ul/kak-lsp" do %{
   cargo build --release --locked
   cargo install --force --path .
 } config %{
-  define-command lsp-restart %{ lsp-stop; lsp-start }
   set-option global lsp_completion_trigger "execute-keys 'h<a-h><a-k>\S[^\h\n,=;*(){}\[\]]\z<ret>'"
   set-option global lsp_diagnostic_line_error_sign "!"
   set-option global lsp_diagnostic_line_warning_sign "•"
