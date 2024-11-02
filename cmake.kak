@@ -13,7 +13,7 @@ hook global WinSetOption filetype=(c|cpp|cmake) %{
 
   # prefix (by default: '')
   declare-option -docstring 'command prefix'     str cmake_opt_prefix
-  set-option global cmake_opt_prefix "command prefix"
+  set-option global cmake_opt_prefix ""
   define-command -override cmake_set_prefix -params 1 -file-completion %{
       set-option global cmake_opt_prefix " %arg{1}"
       cmake_set_command
