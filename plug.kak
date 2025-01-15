@@ -15,7 +15,8 @@ plug "andreyorst/plug.kak" noload
 
 plug 'delapouite/kakoune-buffers' %{
   map global user b ': enter-user-mode buffers<ret>' -docstring 'buffers'
-  map global buffers g ': buffer-by-index ' -docstring 'go to by index'
+  map global buffers g ': buffer-by-index '  -docstring 'go to by index'
+  map global buffers b ': pick-buffers<ret>' -docstring 'pick buffer'
 }
 plug "natasky/kakoune-multi-file"
 
