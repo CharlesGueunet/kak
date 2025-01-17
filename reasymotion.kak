@@ -67,3 +67,4 @@ map global user   'e' ': enter-user-mode easymotion<ret>'            -docstring 
 map global easymotion 'e' ': reasymotion-word<ret>'                  -docstring 'by words'
 map global easymotion 'l' ': reasymotion-on-letter-to-letter<ret>'   -docstring 'by letter'
 map global easymotion 'L' ': reasymotion-line<ret>'                  -docstring 'by Line'
+map global easymotion 'w' ': reasymotion-on-letter-to-word<ret>'                  -docstring 'by Line'

@@ -20,11 +20,11 @@ plug 'delapouite/kakoune-buffers' %{
 }
 plug "natasky/kakoune-multi-file"
 
-set-option global windowing_modules 'x11'
-plug 'delapouite/kakoune-i3' %{
-  # Suggested mapping
-  map global user 3 ': enter-user-mode i3<ret>' -docstring 'i3 mode'
-}
+# set-option global windowing_modules 'X11'
+# plug 'delapouite/kakoune-i3' %{
+#   # Suggested mapping
+#   map global user 3 ': enter-user-mode i3<ret>' -docstring 'i3 mode'
+# }
 
 ## Text
 
@@ -114,6 +114,7 @@ plug "ul/kak-lsp" do %{
 }
 
 # snippets
+declare-option str-list snippets_directories "%val{config}/snippets"
 plug "occivink/kakoune-snippets" config %{
   set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
   set-option global snippets_auto_expand false

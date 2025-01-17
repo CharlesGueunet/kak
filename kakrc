@@ -14,6 +14,11 @@ evaluate-commands %sh{
   kks init
 }
 
+
+# evaluate-commands %sh{
+#   kak-tree-sitter -dks --session $kak_session
+# }
+
 # Config
 # ──────
 
