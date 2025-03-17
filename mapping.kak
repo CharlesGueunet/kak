@@ -52,7 +52,7 @@ map global normal <c-r> %{: new<ret>}
 
 # open term
 # map global normal <c-t> ": with-option windowing_placement horizontal kks-connect terminal<ret>"
-map global normal <c-t> ": kks-connect terminal<ret>"
+map global normal <c-t> ": kks-connect tmux-repl-horizontal<ret>"
 
 # fuzzy
 declare-user-mode fuzzy
@@ -112,10 +112,11 @@ unalias global w write
 alias global w secure_write
 
 # Clipboard
-map global user 'P' '!xsel --output --clipboard <ret>'     -docstring 'paste from clipboard'
-map global user 'p' '<a-!>xsel --output --clipboard <ret>' -docstring 'paste from clipboard (after)'
+map global user 'P' '!wl-paste <ret>'     -docstring 'paste from clipboard'
+map global user 'p' '<a-!>wl-paste <ret>' -docstring 'paste from clipboard (after)'
+
 hook global RegisterModified '"' %{ nop %sh{
-  printf %s "$kak_main_reg_dquote" | xsel --input --clipboard
+ wl-copy -- "$kak_main_reg_dquote" 2> /dev/null
 }}
 
 # Vim like
