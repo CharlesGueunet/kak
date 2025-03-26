@@ -14,6 +14,12 @@ map global normal <a-Q> <a-B>
 map global normal b q
 map global normal B Q
 
+# use e for words movements
+map global normal e 'w"_/[a-zA-Z]<ret><a-i>w'
+map global normal E 'W"_?[a-zA-Z]<ret>'
+map global normal <a-e> '"_<a-/>[a-zA-Z]<ret><a-i>w'
+map global normal <a-E> '"_<a-?>[a-zA-Z]<ret>'
+
 # comment with #
 map global normal '#' :comment-line<ret>
 
