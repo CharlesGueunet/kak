@@ -40,9 +40,6 @@ plug "h-youhei/kakoune-surround" %{
 plug "alexherbo2/auto-pairs.kak" %{
   enable-auto-pairs
 }
-plug "caksoylar/kakoune-focus" config %{
-  map global user 'f' ': focus-toggle<ret>' -docstring 'focus selection'
-}
 
 # completion
 plug "ul/kak-lsp" do %{

@@ -55,8 +55,6 @@ declare-option -hidden int kak_opt_autowrap_column
 set-option global kak_opt_autowrap_column 80
 set-face global LineNumbersWrapped white,default
 
-set-option global ui_options terminal_set_title=false
-
 # Filetype
 # ──────────
 
