@@ -110,11 +110,24 @@ plug "ul/kak-lsp" do %{
       remove-hooks window semantic-tokens
     }
   }
+  hook global WinSetOption filetype=(javascript|typescript) %{
+    map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
+    lsp-enable-window
+    lsp-auto-hover-enable
+    lsp-auto-hover-insert-mode-disable
+
+    hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+    hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+    hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+    hook -once -always window WinSetOption filetype=.* %{
+      remove-hooks window semantic-tokens
+    }
+  }
   hook global WinSetOption filetype=rust %{
     set-option window lsp_server_configuration rust.clippy_preference="on"
   }
   # inlay
-  hook global WinSetOption filetype=(rust|python|nim|go|javascript|typescript|c|cpp) %{
+  hook global WinSetOption filetype=(rust|python|nim|go) %{
     lsp-inlay-diagnostics-enable buffer
     hook buffer ModeChange pop:insert:normal %{ lsp-inlay-diagnostics-enable buffer }
     hook buffer ModeChange push:normal:insert %{ lsp-inlay-diagnostics-disable buffer }
@@ -124,6 +137,12 @@ plug "ul/kak-lsp" do %{
 }
 
 # snippets
+plug "occivink/kakoune-phantom-selection" config %{
+  map global user f     ": phantom-selection-add-selection<ret>"
+  map global user F     ": phantom-selection-select-all; phantom-selection-clear<ret>"
+  map global user <a-f> ": phantom-selection-iterate-next<ret>"
+  map global user <a-F> ": phantom-selection-iterate-prev<ret>"
+}
 declare-option str-list snippets_directories "%val{config}/snippets"
 plug "occivink/kakoune-snippets" config %{
   set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"

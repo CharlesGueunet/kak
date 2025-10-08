@@ -27,7 +27,7 @@ map global normal '#' :comment-line<ret>
 map global normal = '|fmt -w $kak_opt_autowrap_column<ret>'
 
 # clear search buffer
-map global user ',' ': set-register slash \<ret><c-l>: execute-keys ", "<ret>' -docstring 'clear search'
+map global user ',' ': phantom-selection-clear<ret>: set-register slash \<ret><c-l>: execute-keys ", "<ret>' -docstring 'clear search'
 
 # case insensitive search
 map global user '/' '/(?i)' -docstring "case insensitive search"
@@ -59,6 +59,7 @@ map global normal <c-r> %{: new<ret>}
 # open term
 # map global normal <c-t> ": with-option windowing_placement horizontal kks-connect terminal<ret>"
 map global normal <c-t> ": kks-connect tmux-repl-horizontal<ret>"
+map global normal <c-y> ": kks-connect tmux-repl-vertical<ret>"
 
 # fuzzy
 declare-user-mode fuzzy
