@@ -52,19 +52,23 @@ plug "ul/kak-lsp" do %{
   hook global WinSetOption filetype=* %{
     set-option window lsp_hover_anchor false
   }
-  hook global WinSetOption filetype=(cmake|sh) %{
+  hook global WinSetOption filetype=(cmake) %{
       map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
       lsp-enable-window
       set-option buffer lsp_servers %{
         [cmake]
-        filetype= "cmake"
+        filetypes= ["cmake"]
         command= "cmake-language-server"
-        root = "build"
+        root = "/usb/bin/cmake"
       }
+  }
+  hook global WinSetOption filetype=(sh) %{
+      map window user 'l' ': enter-user-mode lsp<ret>' -docstring 'LSP mode'
+      lsp-enable-window
       set-option buffer lsp_servers %{
         [bash]
         filetypes= ["sh","bash"]
-        root= ".git"
+        root= "."
         command= "bash-language-server"
         args= ["start"]
       }
