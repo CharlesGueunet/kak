@@ -82,6 +82,8 @@ hook -group backup-selections global NormalIdle .* %{
 }
 map -docstring 'Restore selections from the backup register' global user z '"bz'
 
+define-command Db db
+
 # sort buffer alphabetically
 define-command -override sort-buffers %{
   eval %sh{

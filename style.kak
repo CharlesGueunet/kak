@@ -1,18 +1,16 @@
 # Colors
 # ──────
 
-set-face global PrimarySelection default,bright-green
-set-face global SecondarySelection default,bright-blue
-set-face global PrimaryCursor default,rgb:FF8080
-set-face global SecondaryCursor default,rgb:80F090
-set-face global Whitespace bright-black,default
+colorscheme one-dark
 
-# add-highlighter global/ show-whitespaces -spc '_' -only-trailing
-add-highlighter global/ show-whitespaces -tab '•' -tabpad ' ' -lf '¬' -spc ' ' -nbsp '⍽'
+set-face global PrimaryCursor default,rgb:5F0000
+set-face global SecondaryCursor default,rgb:005010
+
+add-highlighter global/ show-whitespaces -spc '_' -only-trailing
 add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ regex \b(?:FIXME|TODO|XXX)\b 0:default+rb
-add-highlighter global/ column 80 default,bright-black
-add-highlighter global/ column 120 default,bright-white
+#add-highlighter global/ column 100 default,bright-black
+#add-highlighter global/ column 120 default,bright-white
 
 # Number line column
 # ──────────────────
@@ -24,7 +22,7 @@ add-highlighter global/ wrap -word -indent -marker ↳
 # ───────────────────────────────────
 
 declare-option -hidden regex curword
-set-face global CurWord default,bright-black
+set-face global CurWord default,rgb:000000
 
 define-command -hidden custom-highlight-word-cursor %{
   eval -draft %{

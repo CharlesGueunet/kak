@@ -147,13 +147,3 @@ plug "occivink/kakoune-phantom-selection" config %{
   map global user <a-f> ": phantom-selection-iterate-next<ret>"
   map global user <a-F> ": phantom-selection-iterate-prev<ret>"
 }
-declare-option str-list snippets_directories "%val{config}/snippets"
-plug "occivink/kakoune-snippets" config %{
-  set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
-  set-option global snippets_auto_expand false
-  map global insert '<c-s>' '<a-;>: snippets-expand-trigger<ret><esc>'
-  map global insert '<c-n>' '<a-;>: snippets-select-next-placeholders<ret><esc>'
-  map global normal '<c-n>' ': snippets-select-next-placeholders<ret>'
-}
-plug "andreyorst/kakoune-snippet-collection"
-
