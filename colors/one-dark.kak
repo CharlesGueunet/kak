@@ -48,7 +48,7 @@ set-face global list "rgb:%opt{fg}"
 
 # BUILTIN
 
-set-face global Default "rgb:%opt{fg},rgb:%opt{bg}"
+# set-face global Default "rgb:%opt{fg},rgb:%opt{bg}"
 set-face global PrimarySelection "default,rgba:%opt{blue}%opt{selectionalpha}"
 set-face global SecondarySelection "default,rgba:%opt{green}%opt{selectionalpha}"
 set-face global PrimaryCursor "rgb:%opt{bg},rgb:%opt{blue}"
@@ -63,7 +63,7 @@ set-face global MenuBackground "rgb:%opt{fg},rgb:%opt{subbg}"
 set-face global MenuInfo "rgb:%opt{green}"
 set-face global Information "rgb:%opt{fg},rgb:%opt{subbg}"
 set-face global Error "rgb:%opt{lightred}"
-set-face global StatusLine "rgb:%opt{fg},rgb:%opt{subbg}"
+# set-face global StatusLine "rgb:%opt{fg},rgb:%opt{subbg}"
 set-face global StatusLineMode "rgb:%opt{darkorange}"
 set-face global StatusLineInfo "rgb:%opt{blue}"
 set-face global StatusLineValue "rgb:%opt{fg}"
