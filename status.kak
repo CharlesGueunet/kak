@@ -13,7 +13,7 @@ hook global WinCreate .* %{
 hook -group multiple-cursors-warning global NormalIdle .* %{
     evaluate-commands %sh{
         if [ "$kak_selection_count" -gt 1 ]; then
-            echo "set-face window StatusLine default,rgb:ff7f7f"
+            echo "set-face window StatusLine default,rgb:5f3131"
         else
             echo "unset-face window StatusLine"
         fi
@@ -67,8 +67,8 @@ set-option global modelinefmt ''
 set-option -add global modelinefmt '{red}%opt{modeline_fifo_status}'
 set-option -add global modelinefmt ' {{context_info}}'
 set-option -add global modelinefmt ' {{mode_info}}'
-set-option -add global modelinefmt ' {yellow,default}{black,yellow}¶ {black,white} %val{bufname}{default,white}'
-set-option -add global modelinefmt ' {green,white}%opt{modeline_git_start}{white,green}%opt{modeline_git_logo}{black,white}%opt{modeline_git_branch}{default,white} {red,white}{black,red}⚙ {black,white} %val{session}'
+set-option -add global modelinefmt ' {yellow,default}{black,yellow}¶ {white,black} %val{bufname}{default,black}'
+set-option -add global modelinefmt ' {green,black}%opt{modeline_git_start}{black,green}%opt{modeline_git_logo}{default,black}%opt{modeline_git_branch}{default,black} {red,black}{black,red}⚙ {white,black} %val{session}'
 
 set-option global ui_options terminal_set_title=true terminal_title="Edit" terminal_status_on_top=true
 
